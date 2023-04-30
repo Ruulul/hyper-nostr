@@ -18,9 +18,9 @@ swarm.on('connection', stream => {
     conns.add(stream)
     stream.once('close', conns.delete(stream))
     stream.on('data', data => {
-        subs.forEach(({filters, socket}) => 
+        subs.forEach(({filters, socket}, key) => 
             filterEvents([data], filters)
-            .map(event => socket.send(event))
+            .map(event => socket.send(["EVENT", key, event]))
         )
         handleEvent(data)
     })
@@ -43,19 +43,20 @@ f_i.register(async function (fastify) {
             const [type, value, ...rest] = JSON.parse(message)
             switch (type) {
                 case 'EVENT':
-                    conns.forEach(stream => stream.send(JSON.stringify(value)))
+                    conns.forEach(stream => stream.send(value))
                     handleEvent(value)
                     break;
                 case 'REQ':
                     subs.set(value, { filters: rest, socket })
-                    socket.send(queryEvents(rest))
+                    socket.send(queryEvents(rest).map(event => ["EVENT", value, event]))
+                    socket.send(["EOSE", value])
                     break;
                 case 'CLOSE':
                     subs.delete(value)
                     break;
 
                 default:
-                    socket.send(JSON.stringify(['NOTICE', 'Unrecognized event']))
+                    socket.send(['NOTICE', 'Unrecognized event'])
                     console.log('Unrecognized event')
             }
         })
