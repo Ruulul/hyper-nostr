@@ -18,9 +18,9 @@ swarm.on('connection', stream => {
     conns.add(stream)
     stream.once('close', conns.delete(stream))
     stream.on('data', data => {
-        subs.forEach(({filters, socket}, key) => 
+        subs.forEach(({ filters, socket }, key) =>
             filterEvents([data], filters)
-            .map(event => socket.send(["EVENT", key, event]))
+                .map(event => socket.send(["EVENT", key, event]))
         )
         handleEvent(data)
     })
@@ -38,13 +38,14 @@ f_i.register(async function (fastify) {
         const { socket } = con
         users.add(socket)
         console.log('ws connection')
-        
+
         socket.on('message', message => {
             const [type, value, ...rest] = JSON.parse(message)
             switch (type) {
                 case 'EVENT':
                     conns.forEach(stream => stream.send(value))
                     handleEvent(value)
+                    socket.send(["OK", value.id, true, ""])
                     break;
                 case 'REQ':
                     subs.set(value, { filters: rest, socket })
@@ -54,7 +55,8 @@ f_i.register(async function (fastify) {
                 case 'CLOSE':
                     subs.delete(value)
                     break;
-
+                case 'COUNT':
+                    subs.get(value).socket.send(["COUNT", value, { count: queryEvents(rest).length }])
                 default:
                     socket.send(['NOTICE', 'Unrecognized event'])
                     console.log('Unrecognized event')
@@ -64,7 +66,7 @@ f_i.register(async function (fastify) {
             users.delete(socket)
             subs.forEach(({ socket: _socket }, key) => socket === _socket && subs.delete(key))
         })
-        
+
         if (topic !== req.params.topic) {
             if (topic) await swarm.leave(topicBuffer(topic))
             joinTopic(req.params.topic, socket)
