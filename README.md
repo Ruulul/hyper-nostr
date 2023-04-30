@@ -5,3 +5,6 @@
 
 # Current issues
 There is support to only one topic at the same time;
+
+# NIPs implemented
+Currently only NIP-01, NIP-20 and NIP-45
