@@ -4,5 +4,4 @@
 3. Setup done!
 
 # Current issues
-It is missing hastags handling in the filtering of events;
 There is support to only one topic at the same time;

@@ -14,8 +14,9 @@ export function handleEvent(data) {
 
 const filtersHandlers = {
     ids: (event, filter) => filter.some(id => event.id.startsWith(id)),
-    kinds: (event, filter) => filter.some(kind => event.kind === kind),
+    kinds: (event, filter) => filter.includes(event.kind),
     authors: (event, filter) => filter.some(author => event.pubkey.startsWith(author)),
+    hastag: (event, filter, tag) => event.tags.some(([_tag, key]) => _tag === tag.slice(1) && filter.includes(key)),
     since: (event, filter) => event.created_at >= filter,
     until: (event, filter) => event.created_at <= filter,
 }
@@ -35,9 +36,11 @@ function filterOrQueryEvents(initial_data, _filters, { no_limit } = {}) {
             filters
             .map(filter => 
                 filter
-                .filter(([key])=> key in filtersHandlers && key !== 'limit')
+                .filter(([key])=> key.startsWith('#') || key in filtersHandlers && key !== 'limit')
                 .map(([key, value])=>
-                    filtersHandlers[key](event, value)
+                    key.startsWith('#') 
+                        ? filtersHandlers.hastag(event, value, key)
+                        : filtersHandlers[key](event, value)
                 )
                 .every(Boolean)
             )
