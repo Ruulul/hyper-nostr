@@ -30,7 +30,7 @@ export function filterEvents(events, filters) {
     return filterOrQueryEvents(events, filters, { no_limit: true })
 }
 
-function filterOrQueryEvents(initial_data, _filters, { no_limit }) {
+function filterOrQueryEvents(initial_data, _filters, { no_limit } = {}) {
     const filters = filters.map(filter => Object.entries(filter))
     let data = [...initial_data]
         .filter(event => 
