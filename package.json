@@ -1,0 +1,20 @@
+{
+  "name": "hyper-nostr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@fastify/websocket": "^8.0.0",
+    "fastify": "^4.17.0",
+    "graceful-goodbye": "^1.2.1",
+    "hyperswarm": "^4.4.1",
+    "lowdb": "^6.0.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
