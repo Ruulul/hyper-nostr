@@ -48,7 +48,7 @@ f_i.register(async function (fastify) {
                     break;
                 case 'REQ':
                     subs.set(value, { filters: rest, socket })
-                    socket.send(queryEvents(rest).map(event => ["EVENT", value, event]))
+                    queryEvents(rest).map(event => ["EVENT", value, event]).forEach(event => socket.send(event))
                     socket.send(["EOSE", value])
                     break;
                 case 'CLOSE':
