@@ -1,6 +1,5 @@
 import fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
-import { readFile } from "fs/promises";
 import Hyperswarm from "hyperswarm";
 import goodbye from 'graceful-goodbye';
 import { handleEvent, queryEvents, filterEvents } from "./db.js";
