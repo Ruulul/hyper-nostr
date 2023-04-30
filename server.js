@@ -68,8 +68,8 @@ f_i.register(async function (fastify) {
         })
 
         if (topic !== req.params.topic) {
-            if (topic) await swarm.leave(topicBuffer(topic))
-            joinTopic(req.params.topic, socket)
+            if (topic) await swarm.leave(await topicBuffer(topic))
+            await joinTopic(req.params.topic, socket)
         } else {
             echoTopic(topic, socket)
         }
@@ -81,15 +81,16 @@ f_i.listen({ port }, err => {
     console.log(`listening on ${port}`)
 })
 
-function topicBuffer(topic) {
-    return Buffer.from(topic, 0, 32)
+async function topicBuffer(topic) {
+    const hash = await crypto.subtle.digest('sha256', Buffer.from('hyper-nostr-' + topic))
+    return Buffer.from(hash, 0, 32)
 }
 function echoTopic(topic, socket) {
     const text = `Connected successfully to topic ${topic}!`
     socket.send(text)
 }
-function joinTopic(_topic, socket) {
+async function joinTopic(_topic, socket) {
     topic = _topic
-    const discovery = swarm.join(topicBuffer(topic))
+    const discovery = swarm.join(await topicBuffer(topic))
     discovery.flushed().then(echoTopic(topic, socket))
 }
