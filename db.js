@@ -2,32 +2,16 @@ import goodbye from 'graceful-goodbye'
 import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
 const adapter = new JSONFile('db.json')
-const default_data = {
-    metadata: [],
-    notes: [],
-    relays: [],
-}
+const default_data = []
 const db = new Low(adapter, default_data)
 await db.read()
 goodbye(async _ => await db.write())
-const { metadata, notes, relays } = db.data
+const events = db.data
 
 export function handleEvent(data) {
     const event = JSON.parse(data)
     console.log({ event })
-    switch (event.kind) {
-        case 0:
-            metadata.push(event)
-            break;
-        case 1:
-            notes.push(event)
-            break;
-        case 2:
-            relays.push(event)
-            break;
-        default:
-            console.log('Unrecognized kind; dropping event', event)
-    }
+    events.push(event)
 }
 
 const filtersHandlers = {
@@ -40,7 +24,7 @@ const filtersHandlers = {
 }
 
 export function queryEvents(filters) {
-    return filterOrQueryEvents([...notes, ...relays, ...metadata], filters)
+    return filterOrQueryEvents(events, filters)
 }
 
 export function filterEvents(events, filters) {
