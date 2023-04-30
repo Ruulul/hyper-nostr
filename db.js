@@ -9,17 +9,15 @@ goodbye(async _ => await db.write())
 const events = db.data
 
 export function handleEvent(data) {
-    const event = JSON.parse(data)
-    console.log({ event })
-    events.push(event)
+    events.push(data)
 }
 
 const filtersHandlers = {
-    ids: (event, filter) => filter.ids.any(id => event.id.startsWith(id)),
-    kinds: (event, filter) => filter.kinds.any(kind => event.kind === kind),
-    authors: (event, filter) => filter.authors.any(author => event.pubkey.startsWith(author)),
-    since: (event, filter) => event.created_at >= filter.since,
-    until: (event, filter) => event.created_at <= filter.until,
+    ids: (event, filter) => filter.some(id => event.id.startsWith(id)),
+    kinds: (event, filter) => filter.some(kind => event.kind === kind),
+    authors: (event, filter) => filter.some(author => event.pubkey.startsWith(author)),
+    since: (event, filter) => event.created_at >= filter,
+    until: (event, filter) => event.created_at <= filter,
 }
 
 export function queryEvents(filters) {
@@ -41,7 +39,7 @@ function filterOrQueryEvents(initial_data, _filters, { no_limit } = {}) {
                 .map(([key, value])=>
                     filtersHandlers[key](event, value)
                 )
-                .every(Boolean)    
+                .every(Boolean)
             )
             .some(Boolean)
         )
