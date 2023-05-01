@@ -2,8 +2,10 @@
 # https://github.com/geduldig/TwitterAPI
 import sys
 import os
+import math
 import requests
 import shutil
+import subprocess
 # import importlib
 # from importlib.resources import read_text
 import time
@@ -41,6 +43,8 @@ def blockTime():
     try:
         global block_time
         block_time = blockcypher.get_latest_block_height(coin_symbol='btc')
+        # assert block_time == 0
+        assert block_time > 0
         global block_height
         block_height = repr(block_time)
         f = open("BLOCK_TIME", "w")
@@ -48,7 +52,7 @@ def blockTime():
         f.close()
         return block_time
     except:
-        return 0
+        return 0.000000000001
         pass
 
 
@@ -68,7 +72,12 @@ def WEEBLE():
     global w_seconds
     global w_block_time
     w_seconds = getSeconds()
+    print("w_seconds="+str(w_seconds))
     w_block_time = blockTime()
+    # assert w_block_time == 0
+    assert w_block_time > 0
+    print("w_block_time="+str(w_block_time))
+    # weeble = math.floor(w_seconds / w_block_time)
     weeble = w_seconds / w_block_time
     print("weeble="+str(weeble))
     return weeble
@@ -134,9 +143,9 @@ api  = TwitterAPI(cak,cask,at,ats)
 getMempoolAPI('https://mempool.space/api/v1/difficulty-adjustment', DIFFICULTY)
 getMempoolAPI('https://mempool.space/api/blocks/tip/height',        BLOCK_TIP_HEIGHT)
 # searchBitcoin()
-# print(blockTime())
-# print(getMillis())
-# print(getSeconds())
+print(blockTime())
+print(getMillis())
+print(getSeconds())
 # tweetBlockTime(blockTime())
 m = hashlib.sha256()
 m.update(b"Nobody inspects")
@@ -177,15 +186,19 @@ def syndicateMessage(block_time):
         if is_tool('nostril'):
             message = "test twitter/nostr syndication"
             digest = HEX_MESSAGE_DIGEST(GPGID, message)
-            r = api.request('statuses/update',
-                            {'status':
-                             "GPGID:" + GPGID
-                             + ':MESSAGE:' + message
-                             + ':DIGEST:' + digest
-                             + ':TOOL:' + str(is_tool('nostril'))
-                             + ':WHICHTOOL:' + str(which_tool('nostril'))
-                             + ':BTC:UNIX:' + BTC_UNIX_TIME()
-                             })
+            cmd_str = "nostril --envelope --content '"+message+" "+digest+"'"
+            subprocess.run(cmd_str, shell=True)
+            # r = api.request('statuses/update',
+            #                 {'status':
+            #                  "GPGID:" + GPGID
+            #                  + ':MESSAGE:' + message
+            #                  + ':DIGEST:' + digest
+            #                  + ':TOOL:' + str(is_tool('nostril'))
+            #                  + ':WHICHTOOL:' + str(which_tool('nostril'))
+            #                  + ':BTC:UNIX:' + BTC_UNIX_TIME()
+            #                  })
+            # print(r.text)
+            print("" + message + "" + digest + "" + cmd_str + "")
         else:
             message = "test twitter syndication"
             digest = HEX_MESSAGE_DIGEST(GPGID, message)
@@ -200,10 +213,10 @@ def syndicateMessage(block_time):
         # {'status': HEX_MESSAGE_DIGEST(GPGID,"test message")})
         # print(BTC_UNIX_TIME)
         # exit()
-        if (r.status_code == 200):
-            print('api.request SUCCESS')
-        else:
-            print('api.request FAILURE')
+        # if (r.status_code == 200):
+        #     print('api.request SUCCESS')
+        # else:
+        #     print('api.request FAILURE')
 
     else:
         print('tweetBlockTime() FAILURE')
@@ -233,11 +246,15 @@ def which_tool(name):
 
 global NOSTRIL
 NOSTRIL = is_tool('nostril')
-print(NOSTRIL)
+print("NOSTRIL="+str(NOSTRIL))
+WEBSOCAT = is_tool('websocat')
+print("WEBSOCAT="+str(WEBSOCAT))
+
 print(BTC_UNIX_TIME())
+BTC_UNIX_TIME()
 
 global GPGID
 GPGID = 'BB06757B'
-# HEX_MESSAGE_DIGEST(GPGID, "test message")
+HEX_MESSAGE_DIGEST(GPGID, "test message")
 HEX_MESSAGE_DIGEST(GPGID, str(NOSTRIL))
 syndicateMessage(blockTime())
