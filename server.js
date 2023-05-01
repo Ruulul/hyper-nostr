@@ -23,7 +23,7 @@ async function createSwarm(topic) {
         console.log('swarm connection on', topic)
         conns.add(stream)
         stream.once('close', _ => conns.delete(stream))
-        stream.on('error', err => console.log(`got error ${err.name}`))
+        stream.on('error', err => console.log(`got error ${err.cause || err.message || err.name}`))
         stream.on('data', data => {
             const event = JSON.parse(data)
             subs.forEach(({ filters, socket }, key) =>
