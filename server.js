@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import Hyperswarm from "hyperswarm";
