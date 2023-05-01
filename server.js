@@ -70,6 +70,7 @@ f_i.register(async function (fastify) {
                     break;
                 case 'COUNT':
                     subs.get(value).socket.send(["COUNT", value, { count: queryEvents(rest).length }])
+                    break;
                 default:
                     socket.send(['NOTICE', 'Unrecognized event'])
                     console.log('Unrecognized event')
