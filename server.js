@@ -5,28 +5,33 @@ import goodbye from 'graceful-goodbye';
 import { createHash } from "crypto";
 import { handleEvent, queryEvents, filterEvents } from "./db.js";
 
-
-const swarm = new Hyperswarm()
-goodbye(async _ => {
-    await swarm.destroy()
-    console.log('swarm destroyed!')
-})
-const conns = new Set
-const users = new Set
-const subs = new Map
-swarm.on('connection', stream => {
-    console.log('swarm connection')
-    conns.add(stream)
-    stream.once('close', conns.delete(stream))
-    stream.on('data', data => {
-        subs.forEach(({ filters, socket }, key) =>
-            filterEvents([data], filters)
-                .map(event => socket.send(["EVENT", key, event]))
-        )
-        handleEvent(data)
+const topics = new Map
+async function createSwarm(topic) {
+    const swarm = new Hyperswarm()
+    goodbye(async _ => {
+        await swarm.destroy()
+        console.log(`swarm ${topic} destroyed!`)
     })
-})
-let topic
+    const conns = new Set
+    const users = new Set
+    const subs = new Map
+    await swarm.join(topicBuffer(topic)).flushed()
+    swarm.on('connection', stream => {
+        console.log('swarm connection on', topic)
+        conns.add(stream)
+        stream.once('close', conns.delete(stream))
+        stream.on('error', console.log)
+        stream.on('data', data => {
+            subs.forEach(({ filters, socket }, key) =>
+                filterEvents([data], filters)
+                    .map(event => socket.send(["EVENT", key, event]))
+            )
+            handleEvent(data)
+        })
+    })
+    console.log(`swarm ${topic} created!`)
+    return { conns, users, subs }
+}
 
 const fastify_instance = fastify()
 const f_i = fastify_instance
@@ -36,6 +41,11 @@ const port = 3000
 f_i.register(fastifyWebsocket)
 f_i.register(async function (fastify) {
     fastify.get('/:topic', { websocket: true }, async (con, req) => {
+        const { topic } = req.params
+        if (!topics.has(topic)) {
+            topics.set(topic, await createSwarm(topic))
+        }
+        const { conns, subs, users } = topics.get(topic)
         const { socket } = con
         users.add(socket)
         console.log('ws connection')
@@ -67,13 +77,6 @@ f_i.register(async function (fastify) {
             users.delete(socket)
             subs.forEach(({ socket: _socket }, key) => socket === _socket && subs.delete(key))
         })
-
-        if (topic !== req.params.topic) {
-            if (topic) await swarm.leave(await topicBuffer(topic))
-            await joinTopic(req.params.topic, socket)
-        } else {
-            echoTopic(topic, socket)
-        }
     })
 })
 
@@ -82,15 +85,6 @@ f_i.listen({ port }, err => {
     console.log(`listening on ${port}`)
 })
 
-async function topicBuffer(topic) {
+function topicBuffer(topic) {
     return createHash('sha256').update('hyper-nostr-' + topic).digest()
-}
-function echoTopic(topic, socket) {
-    const text = `Connected successfully to topic ${topic}!`
-    socket.send(text)
-}
-async function joinTopic(_topic, socket) {
-    topic = _topic
-    const discovery = swarm.join(await topicBuffer(topic))
-    discovery.flushed().then(echoTopic(topic, socket))
 }

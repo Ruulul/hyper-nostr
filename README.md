@@ -3,8 +3,5 @@
 2. Add your relay as `ws://localhost:3000/[topic]` in your Nostr client (I am using `nostr` as a topic to make some kind of generic swarm)
 3. Setup done!
 
-# Current issues
-There is support to only one topic at the same time;
-
 # NIPs implemented
 Currently only NIP-01, NIP-20 and NIP-45
