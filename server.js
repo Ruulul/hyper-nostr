@@ -37,7 +37,7 @@ async function createSwarm(topic) {
 
 const fastify_instance = fastify()
 const f_i = fastify_instance
-const port = 3000
+const port = process.argv[2] || 3000
 
 
 f_i.register(fastifyWebsocket)
