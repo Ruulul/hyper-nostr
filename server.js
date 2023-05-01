@@ -21,7 +21,7 @@ async function createSwarm(topic) {
     swarm.on('connection', stream => {
         console.log('swarm connection on', topic)
         conns.add(stream)
-        stream.once('close', conns.delete(stream))
+        stream.once('close', _ => conns.delete(stream))
         stream.on('error', console.log)
         stream.on('data', data => {
             subs.forEach(({ filters, socket }, key) =>

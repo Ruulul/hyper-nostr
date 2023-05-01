@@ -30,15 +30,15 @@ export default async function createDB(topic) {
     }
 
     function queryEvents(filters) {
-        return filterOrQueryEvents(events, filters)
+        return filter(events, filters)
     }
 
     function filterEvents(events, filters) {
-        return filterOrQueryEvents(events, filters, { no_limit: true })
+        return filter(events, filters, { no_limit: true })
     }
 }
 
-function filterOrQueryEvents(initial_data, _filters, { no_limit } = {}) {
+function filter(initial_data, _filters, { no_limit } = {}) {
     const filters = _filters.map(filter => Object.entries(filter))
     let data = [...initial_data]
         .filter(event =>

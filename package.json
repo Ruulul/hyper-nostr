@@ -1,6 +1,6 @@
 {
   "name": "hyper-nostr",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "",
   "main": "server.js",
   "type": "module",
