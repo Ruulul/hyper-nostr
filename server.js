@@ -5,10 +5,11 @@ import fastifyWebsocket from "@fastify/websocket";
 import Hyperswarm from "hyperswarm";
 import goodbye from 'graceful-goodbye';
 import { createHash } from "crypto";
-import { handleEvent, queryEvents, filterEvents } from "./db.js";
+import createDB from "./db.js";
 
 const topics = new Map
 async function createSwarm(topic) {
+    const { filterEvents, handleEvent, queryEvents } = await createDB()
     const swarm = new Hyperswarm()
     goodbye(async _ => {
         await swarm.destroy()
@@ -31,7 +32,7 @@ async function createSwarm(topic) {
         })
     })
     console.log(`swarm ${topic} created!`)
-    return { conns, subs }
+    return { conns, subs, handleEvent, queryEvents }
 }
 
 const fastify_instance = fastify()
@@ -46,7 +47,7 @@ f_i.register(async function (fastify) {
         if (!topics.has(topic)) {
             topics.set(topic, await createSwarm(topic))
         }
-        const { conns, subs } = topics.get(topic)
+        const { conns, subs, handleEvent, queryEvents } = topics.get(topic)
         const { socket } = con
         console.log('ws connection')
 
