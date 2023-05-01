@@ -26,11 +26,12 @@ async function createSwarm(topic) {
         stream.on('error', err => console.log(`got error ${err.name}`))
         stream.on('data', data => {
             console.log(`data on ${topic}:`, data)
+            const event = JSON.parse(data)
             subs.forEach(({ filters, socket }, key) =>
-                filterEvents([data], filters)
+                filterEvents([event], filters)
                     .map(event => socket.send(["EVENT", key, event]))
             )
-            handleEvent(data)
+            handleEvent(event)
         })
     })
     console.log(`swarm ${topic} created!`)
@@ -58,7 +59,7 @@ f_i.register(async function (fastify) {
             const [type, value, ...rest] = JSON.parse(message)
             switch (type) {
                 case 'EVENT':
-                    conns.forEach(stream => stream.send(value))
+                    conns.forEach(stream => stream.write(JSON.stringify(value)))
                     handleEvent(value)
                     socket.send(["OK", value.id, true, ""])
                     break;

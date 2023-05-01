@@ -11,11 +11,12 @@ const filtersHandlers = {
     until: (event, filter) => event.created_at <= filter,
 }
 
-export default async function createDB(topic) {
+export default async function createDB(topic, interval = 5 * 60 * 1000) {
     const adapter = new JSONFile('./topics/' + topic + '.json')
     const db = new Low(adapter, default_data)
     await db.read()
-    goodbye(async _ => await db.write())
+    goodbye(async _ => await db.write().then(_ => console.log('Last wrote on', topic)))
+    setInterval(_ => db.write().then(_ => console.log('Wrote on', topic)), interval)
 
     const events = db.data
 
