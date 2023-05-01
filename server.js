@@ -9,9 +9,10 @@ import createDB from "./db.js";
 
 const topics = new Map
 async function createSwarm(topic) {
-    const { filterEvents, handleEvent, queryEvents } = await createDB()
+    const { filterEvents, handleEvent, queryEvents } = await createDB(topic)
     const swarm = new Hyperswarm()
     goodbye(async _ => {
+        swarm.connections.forEach(conn => conn.end())
         await swarm.destroy()
         console.log(`swarm ${topic} destroyed!`)
     })
@@ -22,8 +23,9 @@ async function createSwarm(topic) {
         console.log('swarm connection on', topic)
         conns.add(stream)
         stream.once('close', _ => conns.delete(stream))
-        stream.on('error', console.log)
+        stream.on('error', err => console.log(`got error ${err.name}`))
         stream.on('data', data => {
+            console.log(`data on ${topic}:`, data)
             subs.forEach(({ filters, socket }, key) =>
                 filterEvents([data], filters)
                     .map(event => socket.send(["EVENT", key, event]))
@@ -44,6 +46,7 @@ f_i.register(fastifyWebsocket)
 f_i.register(async function (fastify) {
     fastify.get('/:topic', { websocket: true }, async (con, req) => {
         const { topic } = req.params
+        if (!topic) return
         if (!topics.has(topic)) {
             topics.set(topic, await createSwarm(topic))
         }
