@@ -12,11 +12,16 @@ const filtersHandlers = {
 }
 
 export default async function createDB(topic, interval = 5 * 60 * 1000) {
-    const adapter = new JSONFile('./topics/' + topic + '.json')
+    const filename = __dirname + 'topics/' + topic + '.json'
+    const adapter = new JSONFile(filename, {})
     const db = new Low(adapter, default_data)
     await db.read()
-    goodbye(async _ => await db.write().then(_ => console.log('Last wrote on', topic)))
-    setInterval(_ => db.write().then(_ => console.log('Wrote on', topic)), interval)
+    goodbye(async _ => await db.write()
+    .then(_ => console.log('Last wrote on', topic))
+    .catch(console.error))
+    setInterval(_ => db.write()
+    .then(_ => console.log('Wrote on', topic))
+    .catch(console.error), interval)
 
     const events = db.data
 
