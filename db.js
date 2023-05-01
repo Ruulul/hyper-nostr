@@ -51,7 +51,7 @@ export default async function createDB(topic, interval = 5 * 60 * 1000) {
 
 function filter(initial_data, _filters, { no_limit } = {}) {
     const filters = _filters.map(filter => Object.entries(filter))
-    let data = [...initial_data]
+    const data = [...initial_data]
         .filter(event =>
             filters
                 .map(filter =>
@@ -66,6 +66,6 @@ function filter(initial_data, _filters, { no_limit } = {}) {
                 )
                 .some(Boolean)
         )
-    let limit = !no_limit && Math.max.apply(undefined, filters.filter(filter => 'limit' in filter).map(filter => filter.limit)) || Infinity
+    const limit = !no_limit && Math.max.apply(undefined, filters.filter(filter => 'limit' in filter).map(filter => filter.limit)) || Infinity
     return data.sort((a, b) => b.created_at - a.created_at).slice(0, limit)
 }
