@@ -1,6 +1,11 @@
 import goodbye from 'graceful-goodbye'
 import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
+
+import { fileURLToPath } from 'url'
+import path from 'path' 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const default_data = []
 const filtersHandlers = {
     ids: (event, filter) => filter.some(id => event.id.startsWith(id)),
@@ -12,7 +17,7 @@ const filtersHandlers = {
 }
 
 export default async function createDB(topic, interval = 5 * 60 * 1000) {
-    const filename = __dirname + 'topics/' + topic + '.json'
+    const filename = path.join(__dirname, 'topics/' + topic + '.json')
     const adapter = new JSONFile(filename, {})
     const db = new Low(adapter, default_data)
     await db.read()
