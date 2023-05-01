@@ -25,9 +25,7 @@ async function createSwarm(topic) {
         stream.once('close', _ => conns.delete(stream))
         stream.on('error', err => console.log(`got error ${err.name}`))
         stream.on('data', data => {
-            console.log(`data on ${topic}:`, data.toString())
             const event = JSON.parse(data)
-            console.log(`event on ${topic}:`, event)
             subs.forEach(({ filters, socket }, key) =>
                 filterEvents([event], filters)
                     .map(event => socket.send(["EVENT", key, event]))
