@@ -15,7 +15,6 @@ async function createSwarm(topic) {
         console.log(`swarm ${topic} destroyed!`)
     })
     const conns = new Set
-    const users = new Set
     const subs = new Map
     await swarm.join(topicBuffer(topic)).flushed()
     swarm.on('connection', stream => {
@@ -32,7 +31,7 @@ async function createSwarm(topic) {
         })
     })
     console.log(`swarm ${topic} created!`)
-    return { conns, users, subs }
+    return { conns, subs }
 }
 
 const fastify_instance = fastify()
@@ -47,9 +46,8 @@ f_i.register(async function (fastify) {
         if (!topics.has(topic)) {
             topics.set(topic, await createSwarm(topic))
         }
-        const { conns, subs, users } = topics.get(topic)
+        const { conns, subs } = topics.get(topic)
         const { socket } = con
-        users.add(socket)
         console.log('ws connection')
 
         socket.on('message', message => {
@@ -77,7 +75,6 @@ f_i.register(async function (fastify) {
             }
         })
         socket.once('close', _ => {
-            users.delete(socket)
             subs.forEach(({ socket: _socket }, key) => socket === _socket && subs.delete(key))
         })
     })
