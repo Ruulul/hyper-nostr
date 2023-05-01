@@ -2,6 +2,7 @@ import fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
 import Hyperswarm from "hyperswarm";
 import goodbye from 'graceful-goodbye';
+import { createHash } from "crypto";
 import { handleEvent, queryEvents, filterEvents } from "./db.js";
 
 
@@ -82,8 +83,7 @@ f_i.listen({ port }, err => {
 })
 
 async function topicBuffer(topic) {
-    const hash = await crypto.subtle.digest('sha256', Buffer.from('hyper-nostr-' + topic))
-    return Buffer.from(hash, 0, 32)
+    return createHash('sha256').update('hyper-nostr-' + topic).digest()
 }
 function echoTopic(topic, socket) {
     const text = `Connected successfully to topic ${topic}!`
