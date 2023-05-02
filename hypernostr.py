@@ -176,6 +176,10 @@ print(m.hexdigest())
 
 
 def HEX_MESSAGE_DIGEST(recipient, message):
+    if int(weeble) < 1:
+        BTC_UNIX_TIME()
+    if not is_tool('nostril'):
+        which_tool('nostril')
     n = hashlib.sha256()
     n.update(bytes(recipient, 'utf-8'))
     n.update(bytes(message, 'utf-8'))
