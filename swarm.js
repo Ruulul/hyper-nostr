@@ -42,7 +42,7 @@ export default async function createSwarm(_topic) {
     return { subs, sendEvent, queryEvents }
 
     function sendEvent(event) {
-        handleEvent(value)
+        handleEvent(event)
         events.broadcast(event)
     }
 }
