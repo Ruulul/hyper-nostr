@@ -317,17 +317,57 @@ def is_tool(name):
 def which_tool(name):
     """Check whether `name` is on PATH and marked as executable."""
     from shutil import which
+    if is_tool(name):
+        # from distutils.spawn import find_executable
+        # return find_executable(name) is not None
+        return which(name)
+    else:
+        return 0
 
-    # from distutils.spawn import find_executable
-    # return find_executable(name) is not None
-    return which(name)
 
+def initialize(DEBUG):
 
-global NOSTRIL
-NOSTRIL = is_tool('nostril')
-print("NOSTRIL="+str(NOSTRIL))
-WEBSOCAT = is_tool('websocat')
-print("WEBSOCAT="+str(WEBSOCAT))
+    ACCESS_TOKEN_SECRET = \
+        os.path.expanduser(
+            './twitter_access_tokens/access_token_secret.txt')
+    assert ACCESS_TOKEN_SECRET != ""
+    ACCESS_TOKEN = \
+        os.path.expanduser(
+            './twitter_access_tokens/access_token.txt')
+    assert ACCESS_TOKEN != ""
+    CONSUMER_API_KEY = \
+        os.path.expanduser(
+            './twitter_access_tokens/consumer_api_key.txt')
+    assert CONSUMER_API_KEY != ""
+    CONSUMER_API_SECRET_KEY = \
+        os.path.expanduser(
+            './twitter_access_tokens/consumer_api_secret_key.txt')
+    assert CONSUMER_API_SECRET_KEY != ""
+
+    global cak, cask, at, ats, obt
+    cak = getData(CONSUMER_API_KEY)
+    assert cak != ""
+    cask = getData(CONSUMER_API_SECRET_KEY)
+    assert cask != ""
+    at = getData(ACCESS_TOKEN)
+    assert at != ""
+    ats = getData(ACCESS_TOKEN_SECRET)
+    assert ats != ""
+    global api
+    api = TwitterAPI(cak, cask, at, ats)
+
+    BLOCK_TIP_HEIGHT = \
+        os.path.expanduser(
+            './BLOCK_TIP_HEIGHT')
+    DIFFICULTY = \
+        os.path.expanduser(
+            './DIFFICULTY')
+    OLD_BLOCK_TIME = \
+        os.path.expanduser(
+            './OLD_BLOCK_TIME')
+
+    obt = getData(OLD_BLOCK_TIME)
+    assert obt != ""
 
     try:
         getMempoolAPI(
