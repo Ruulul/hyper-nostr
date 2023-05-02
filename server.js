@@ -21,6 +21,8 @@ async function createSwarm(topic) {
     const subs = new Map
     sdk.join(topicBuffer(topic)).flushed()
 
+    const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
+    
     const events = await sdk.registerExtension(prefix + topic, {
         encoding: 'json',
         onmessage: event => {
@@ -32,7 +34,6 @@ async function createSwarm(topic) {
         },
     })
     
-    const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
 
     console.log(`swarm ${topic} created with hyper!`)
     return { subs, sendEvent, handleEvent, queryEvents }
