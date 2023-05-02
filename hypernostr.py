@@ -145,7 +145,8 @@ def getMempoolAPI(url, DATA):
 
 
 def searchBitcoin():
-    r = api.request('search/tweets', {'q':'bitcoin'})
+    global r
+    r = api.request('search/tweets', {'q': 'bitcoin'})
     for item in r:
         print(item)
 
