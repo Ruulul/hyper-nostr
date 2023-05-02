@@ -26,6 +26,15 @@ sys.path.append("/usr/local/lib/python3.11/site-packages")
 from TwitterAPI import TwitterAPI
 
 
+def decode(s, encodings=('ascii', 'utf8', 'latin1')):
+    for encoding in encodings:
+        try:
+            return s.decode(encoding)
+        except UnicodeDecodeError:
+            pass
+    return s.decode('ascii', 'ignore')
+
+
 def moveBlockTime():
     try:
         shutil.move(os.getcwd()+"/BLOCK_TIME", os.getcwd()+"/OLD_BLOCK_TIME")
