@@ -106,7 +106,7 @@ def WOBBLE():
 
 
 def getData(filename):
-    f = open(filename)
+    f = open(filename, 'rb')
     global data
     data = f.read()
     f.close()
