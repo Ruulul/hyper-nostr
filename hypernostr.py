@@ -206,50 +206,59 @@ def HEX_MESSAGE_DIGEST(recipient, message):
 
 
 def syndicateMessage(block_time):
-    if (block_time != obt):
+    print(not DEBUG)
+    print("block_time="+str(block_time))
+    print("obt="+str(obt.decode()))
+    if not DEBUG:
+        if (block_time != obt):
 
-        # r = api.request('statuses/update',
-        #                 {'status':
-        #                  block_time+":"+getSeconds
-        #                  })
-
-        if is_tool('nostril'):
-            message = "test twitter/nostr syndication"
-            digest = HEX_MESSAGE_DIGEST(GPGID, message)
-            cmd_str = "nostril --envelope --content '"+message+" "+digest+"'"
-            subprocess.run(cmd_str, shell=True)
             # r = api.request('statuses/update',
             #                 {'status':
-            #                  "GPGID:" + GPGID
-            #                  + ':MESSAGE:' + message
-            #                  + ':DIGEST:' + digest
-            #                  + ':TOOL:' + str(is_tool('nostril'))
-            #                  + ':WHICHTOOL:' + str(which_tool('nostril'))
-            #                  + ':BTC:UNIX:' + BTC_UNIX_TIME()
+            #                  block_time+":"+getSeconds
             #                  })
-            # print(r.text)
-            print("" + message + "" + digest + "" + cmd_str + "")
-        else:
-            message = "test twitter syndication"
-            digest = HEX_MESSAGE_DIGEST(GPGID, message)
-            r = api.request('statuses/update',
-                            {'status':
-                             "GPGID:"+GPGID
-                             + ':MESSAGE:' + message
-                             + ':DIGEST:' + digest
-                             + 'BTC:UNIX:' + BTC_UNIX_TIME()
-                             })
-        # r = api.request('statuses/update', \
-        # {'status': HEX_MESSAGE_DIGEST(GPGID,"test message")})
-        # print(BTC_UNIX_TIME)
-        # exit()
-        # if (r.status_code == 200):
-        #     print('api.request SUCCESS')
-        # else:
-        #     print('api.request FAILURE')
 
-    else:
-        print('tweetBlockTime() FAILURE')
+            if is_tool('nostril'):
+                message = \
+                    "test twitter/nostr syndication"
+                digest = \
+                    HEX_MESSAGE_DIGEST(GPGID, message)
+                cmd_str = \
+                    "nostril --envelope --content '" \
+                    + message + " " + digest + \
+                    "' | websocat ws://localhost:3000/nostr"
+                subprocess.run(cmd_str, shell=True)
+                r = api.request('statuses/update',
+                                {'status':
+                                 "GPGID:" + GPGID
+                                 + ':MESSAGE:' + message
+                                 + ':DIGEST:' + digest
+                                 + ':TOOL:' + str(is_tool('nostril'))
+                                 + ':WHICHTOOL:' + str(which_tool('nostril'))
+                                 + ':BTC:UNIX:' + BTC_UNIX_TIME()
+                                 })
+                print(r.text)
+                print("" + message + "" + digest + "" + cmd_str + "")
+            else:
+                message = "test twitter syndication"
+                digest = HEX_MESSAGE_DIGEST(GPGID, message)
+                r = api.request('statuses/update',
+                                {'status':
+                                 "GPGID:"+GPGID
+                                 + ':MESSAGE:' + message
+                                 + ':DIGEST:' + digest
+                                 + 'BTC:UNIX:' + BTC_UNIX_TIME()
+                                 })
+            # r = api.request('statuses/update', \
+            # {'status': HEX_MESSAGE_DIGEST(GPGID,"test message")})
+            # print(BTC_UNIX_TIME)
+            # exit()
+            # if (r.status_code == 200):
+            #     print('api.request SUCCESS')
+            # else:
+            #     print('api.request FAILURE')
+
+        else:
+            print('tweetBlockTime() FAILURE')
 
 
 def is_tool(name):
