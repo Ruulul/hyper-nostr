@@ -1,4 +1,5 @@
 import { DB } from 'hyperbeedeebee'
+import Hyperbee from 'hyperbee'
 
 const filtersHandlers = {
   ids: filter => ['id', { $in: filter }],
@@ -16,12 +17,21 @@ const validateHandlers = {
   since: (event, filter) => event.created_at > filter,
   until: (event, filter) => event.created_at < filter
 }
-export default async function createDB (bee) {
-  const db = new DB(bee)
+export default async function createDB (autobase) {
+  console.log('createDB')
+  const db = new DB(new Hyperbee(autobase.localInput))
+  const dbOutput = new DB(new Hyperbee(autobase.localOutput))
 
+  console.log('create collection')
   const events = db.collection('events')
-  await events.createIndex('kind, created_at, pubkey, id'.split(', '))
+  const readEvents = dbOutput.collection('events')
+  console.log('create indexes')
+  await events.createIndex('kind, created_at, pubkey, id'.split(', ')).catch(e => {
+    console.error(e)
+    throw e
+  })
 
+  console.log('createDB end')
   return { handleEvent, queryEvents, validateEvent }
 
   function handleEvent (event) {
@@ -34,7 +44,7 @@ export default async function createDB (bee) {
     return (
       (await Promise.all(
         queries.map(
-          async query => await events.find(query)
+          async query => await readEvents.find(query)
         )
       )).flat().filter(
         (e, i, a) => i === a.findIndex(s => s.id === e.id)

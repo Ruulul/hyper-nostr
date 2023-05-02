@@ -2,7 +2,7 @@
 
 import * as SDK from 'hyper-sdk'
 import goodbye from 'graceful-goodbye'
-import { DB } from 'hyperbeedeebee'
+import { DB } from 'hyperdeebee'
 import { createInterface } from 'readline'
 const int = createInterface(process.stdin, process.stdout)
 
