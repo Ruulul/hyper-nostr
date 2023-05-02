@@ -134,14 +134,15 @@ def tweetBlockTime(block_time):
             print('tweetBlockTime() FAILURE')
 
 
-def getMempoolAPI(url,DATA):
-    # print(url)
+def getMempoolAPI(url, DATA):
+    print(url)
     with open(DATA, 'wb') as f:
         r = requests.get(url, stream=True)
         f.writelines(r.iter_content(1024))
         response = getData(DATA)
-        # print(getData(DATA))
-        # print(response)
+        print(getData(DATA))
+        print(response)
+
 
 def searchBitcoin():
     r = api.request('search/tweets', {'q':'bitcoin'})
