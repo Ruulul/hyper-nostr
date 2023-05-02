@@ -51,14 +51,16 @@ def blockTime():
         block_time = blockcypher.get_latest_block_height(coin_symbol='btc')
         # assert block_time == 0
         assert block_time > 0
+        print("block_time="+block_time)
         global block_height
         block_height = repr(block_time)
+        print("block_height="+block_height)
         f = open("BLOCK_TIME", "w")
         f.write("" + block_height + "\n")
         f.close()
         return block_time
     except:
-        return 0.000000000001
+        return 0
         pass
 
 
