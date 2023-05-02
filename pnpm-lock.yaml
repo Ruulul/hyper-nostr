@@ -4,6 +4,12 @@ dependencies:
   '@fastify/websocket':
     specifier: ^8.0.0
     version: 8.0.0
+  autobase:
+    specifier: 1.0.0-alpha.8
+    version: 1.0.0-alpha.8
+  autodeebee:
+    specifier: ^1.0.1
+    version: 1.0.1
   fastify:
     specifier: ^4.17.0
     version: 4.17.0
@@ -312,6 +318,24 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
+  /autobase@1.0.0-alpha.8:
+    resolution: {integrity: sha512-Dnlw2u0DCZEY6CPbeLW9YI9MIwR+3kCQueqhzt8XZB98frplQrCtzK8DOjju+mYUGdFviyTUmYto9LCF3aXWdQ==}
+    dependencies:
+      codecs: 2.2.0
+      compact-encoding: 2.11.0
+      debounceify: 1.0.0
+      mutexify: 1.4.0
+      safety-catch: 1.0.2
+      streamx: 2.13.2
+    dev: false
+
+  /autodeebee@1.0.1:
+    resolution: {integrity: sha512-JVAWOZUt4gmxvWWZngAsAPnVrlm+LEQu8QoqB+J8sCsyyTg+aSxcNrfOI3bqlGlQwrBp6pZiQaMeRm48hxiF/w==}
+    dependencies:
+      b4a: 1.6.3
+      hyperbee: 2.8.0
+    dev: false
+
   /available-typed-arrays@1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
     engines: {node: '>= 0.4'}
@@ -467,6 +491,10 @@ packages:
       supports-color: 7.2.0
     dev: true
 
+  /codecs@2.2.0:
+    resolution: {integrity: sha512-+xi2ENsvchtUNa8oBUU58gHgmyN6BEEeZ8NIEgeQ0XnC+AoyihivgZYe+OOiNi+fLy/NUowugwV5gP8XWYDm0Q==}
+    dev: false
+
   /codecs@3.1.0:
     resolution: {integrity: sha512-Dqx8NwvBvnMeuPQdVKy/XEF71igjR5apxBvCGeV0pP1tXadOiaLvDTXt7xh+/5wI1ASB195mXQGJbw3Ml4YDWQ==}
     dependencies:
@@ -539,6 +567,10 @@ packages:
       shebang-command: 2.0.0
       which: 2.0.2
     dev: true
+
+  /debounceify@1.0.0:
+    resolution: {integrity: sha512-7BeSMAPUohdDJ7sU6Tq2M8HkJR05IqQCeVm/qNemrpOgP5SGZD5WeNOXNfsgbESinz6OjMooWPTGZiKUX91XJQ==}
+    dev: false
 
   /debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}

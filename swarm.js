@@ -1,5 +1,7 @@
 import createDB from './db.js'
 import * as SDK from 'hyper-sdk'
+import Autobeedee from 'autodeebee'
+import Autobase from 'autobase'
 import goodbye from 'graceful-goodbye'
 import { createHash } from 'crypto'
 
@@ -17,7 +19,15 @@ export default async function createSwarm (_topic) {
   const topic = prefix + _topic
   const subs = new Map()
 
-  const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic, beeOpts))
+  const IOCores = await sdk.namespace(topic)
+  const localInput = IOCores.get({ name: 'local-input' })
+  const localOutput = IOCores.get({ name: 'local-output' })
+  const autobase = new Autobase({ localInput, localOutput })
+  const bee = new Autobeedee(autobase, beeOpts)
+
+  const knownDBs = new Set()
+  knownDBs.add(localInput.url)
+  const { validateEvent, handleEvent, queryEvents } = await createDB(bee)
 
   const discovery = await sdk.get(createTopicBuffer(topic))
   const events = discovery.registerExtension(topic, {
@@ -29,6 +39,20 @@ export default async function createSwarm (_topic) {
       })
     }
   })
+  const DBBroadcast = discovery.registerExtension(topic + '-autobase', {
+    encoding: 'json',
+    onmessage: message => {
+      let sawNew = false
+      for (const url of message) {
+        if (knownDBs.has(url)) continue
+        sawNew = true
+        knownDBs.add(url)
+        handleNewDB(url)
+      }
+      if (sawNew) broadcastDBs()
+    }
+  })
+  discovery.on('peer-add', broadcastDBs)
 
   console.log(`swarm ${topic} created with hyper!`)
   return { subs, sendEvent, queryEvents }
@@ -36,6 +60,14 @@ export default async function createSwarm (_topic) {
   function sendEvent (event) {
     handleEvent(event)
     events.broadcast(event)
+  }
+
+  function broadcastDBs () {
+    DBBroadcast.broadcast([...knownDBs])
+  }
+
+  async function handleNewDB (url) {
+    await autobase.addInput(await sdk.get(url))
   }
 }
 
