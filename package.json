@@ -1,10 +1,12 @@
 {
   "name": "hyper-nostr",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "",
   "main": "server.js",
   "type": "module",
-  "bin": "server.js",
+  "bin": {
+    "hyper-nostr": "server.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
