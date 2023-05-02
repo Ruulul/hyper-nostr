@@ -15,16 +15,22 @@ export default async function createSwarm(_topic) {
     const topic = prefix + _topic
     const topic_hash = createTopicBuffer(topic)
     const subs = new Map
+    const cons = new Set
     sdk.join(topic_hash)
 
     const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
     sdk.on('peer-add', peerInfo => {
-        const socket = sdk.connections.get(peerInfo.publicKey)
-        socket.on(topic, _handleEvent)
+        if (peerInfo.topics.includes(topic_hash)) {
+            const socket = sdk.connections.get(peerInfo.publicKey)
+            socket.on('data', _handleEvent)
+            cons.add(socket)
+        }
     })
     sdk.once('peer-remove', peerInfo => {
-        const socket = sdk.connections.get(peerInfo.publicKey)
-        socket.removeEventListener(topic, _handleEvent)
+        if (peerInfo.topics.includes(topic_hash)) {
+            const socket = sdk.connections.get(peerInfo.publicKey)
+            cons.delete(socket)
+        }
     })
 
 
@@ -33,13 +39,13 @@ export default async function createSwarm(_topic) {
 
     function sendEvent(event) {
         handleEvent(event)
-        sdk.connections.forEach(connection => connection.emit(topic, event))
+        cons.forEach(socket => socket.write(JSON.stringify(event)))
     }
 
     function _handleEvent(event) {
         console.log(`got event from ${_topic}: `, topic)
-        console.log(event)
-        handleEvent(event)
+        console.log(event.toString())
+        handleEvent(JSON.parse(event))
         subs.forEach(({ filters, socket }, key) =>
             validateEvent(event, filters) &&
             socket.send(["EVENT", key, event])
