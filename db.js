@@ -4,7 +4,7 @@ const filtersHandlers = {
     ids: filter => ["id", { $in: filter }],
     kinds: filter => ["kind", { $in: filter }],
     authors: filter => ["pubkey", { $gte: { $in: filter } }],
-    hastag: (filter, tag) => ["tags", { $all: [{ $all: [tag.slice(1), { $in: filter }] }] }],
+    hastag: (filter, tag) => ["tags", { $all: [tag.slice(1), ...filter ] }],
     since: filter => ["created_at", { $gt: filter }],
     until: filter => ["created_at", { $lt: filter }],
 }
@@ -29,6 +29,7 @@ export default async function createDB(bee) {
     }
     async function queryEvents(filters) {
         const queries = buildQueries(filters)
+    
         const limit = Math.max(filters.map(filter => filter.limit || 0))
         return (
             (await Promise.all(
@@ -66,8 +67,8 @@ function buildQueries(filters) {
                         ? entries
                             .find(([key]) => key === 'tags')
                             ?.[1].$all.push(
-                                filtersHandlers.hastag(filter, key)
-                                [1].$all[0]
+                                ...filtersHandlers.hastag(filter, key)
+                                [1].$all
                             ) || entries.push(filtersHandlers.hastag(filter, key))
                         : entries.push(filtersHandlers[key](filter))
                     return entries
