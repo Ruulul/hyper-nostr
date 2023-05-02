@@ -52,7 +52,3 @@ export default async function createSwarm(_topic) {
         )
     }
 }
-
-function createTopicBuffer(topic) {
-    return require('crypto').createHash('sha256').update(topic).digest()
-}

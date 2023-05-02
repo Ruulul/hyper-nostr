@@ -41,20 +41,21 @@ export default async function createDB(bee) {
             ).slice(0, limit)
         )
     }
-    function validateEvent(event, filters) {
-        return filters
-            .map(filter =>
-                filter
-                    .filter(([key]) => key.startsWith('#') || key in filtersHandlers && key !== 'limit')
-                    .map(([key, value]) =>
-                        key.startsWith('#')
-                            ? validateHandlers.hastag(event, value, key)
-                            : validateHandlers[key](event, value)
-                    )
-                    .every(Boolean)
-            )
-            .some(Boolean)
-    }
+}
+
+function validateEvent(event, filters) {
+    return filters
+        .map(filter =>
+            filter
+                .filter(([key]) => key.startsWith('#') || key in filtersHandlers && key !== 'limit')
+                .map(([key, value]) =>
+                    key.startsWith('#')
+                        ? validateHandlers.hastag(event, value, key)
+                        : validateHandlers[key](event, value)
+                )
+                .every(Boolean)
+        )
+        .some(Boolean)
 }
 
 function buildQueries(filters) {
