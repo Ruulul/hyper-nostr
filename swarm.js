@@ -20,14 +20,14 @@ export default async function createSwarm(_topic) {
     const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
     console.log('db created')
     sdk.on('peer-add', peerInfo => {
-        if (peerInfo.topics.includes(topic_hash)) {
+        if (peerInfo.topics.includes(topic)) {
             const socket = sdk.connections.get(peerInfo.publicKey)
             socket.on('data', _handleEvent)
             cons.add(socket)
         }
     })
     sdk.once('peer-remove', peerInfo => {
-        if (peerInfo.topics.includes(topic_hash)) {
+        if (peerInfo.topics.includes(topic)) {
             const socket = sdk.connections.get(peerInfo.publicKey)
             cons.delete(socket)
         }
