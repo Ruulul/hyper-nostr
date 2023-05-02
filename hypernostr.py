@@ -6,15 +6,21 @@ import math
 import requests
 import shutil
 import subprocess
+import pickle
+import codecs
+import json
+
 # import importlib
 # from importlib.resources import read_text
 import time
 import blockcypher
 import hashlib
-# import pyjq
+import pyjq
 # os.environ['PYTHONPATH']
 sys.path.append('.')
+sys.path.append("/usr/local/lib/python3.9/site-packages")
 sys.path.append("/usr/local/lib/python3.10/site-packages")
+sys.path.append("/usr/local/lib/python3.11/site-packages")
 from TwitterAPI import TwitterAPI
 
 
