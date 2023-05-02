@@ -17,13 +17,22 @@ console.log('your key is', sdk.publicKey.toString('hex'))
 goodbye(_ => sdk.close())
 
 const topics = new Map
-async function createSwarm(topic) {    
+async function createSwarm(_topic) {
+    const topic = prefix + _topic    
     const subs = new Map
-    sdk.join(topicBuffer(topic)).flushed()
+    sdk.join(topic)
 
     const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
-    
-    const events = await sdk.registerExtension(prefix + topic, {
+    const core = await sdk.get(topic)
+    sdk.on('peer-add', peerInfo => {
+        if (peerInfo.topics.includes(topic)) {
+            console.log('TODO: Discover what to do')
+        }
+    })
+    core.on('peer-add', peerInfo => {
+        console.log(`got a peer on ${_topic}, and they are${peerInfo.topics.includes(topic) ? '' : "n't"} in the same topic`)
+    })
+    const events = await core.registerExtension(topic, {
         encoding: 'json',
         onmessage: event => {
             handleEvent(event)
@@ -39,6 +48,7 @@ async function createSwarm(topic) {
     return { subs, sendEvent, handleEvent, queryEvents }
 
     function sendEvent(event) {
+        handleEvent(value)
         events.broadcast(event)
     }
 }
@@ -66,7 +76,6 @@ f_i.register(async function (fastify) {
             switch (type) {
                 case 'EVENT':
                     sendEvent(value)
-                    handleEvent(value)
                     socket.send(["OK", value.id, true, ""])
                     break;
                 case 'REQ':
