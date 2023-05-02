@@ -1,8 +1,10 @@
 import createDB from './db.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from 'graceful-goodbye'
+import { createHash } from 'crypto'
 
 const prefix = 'hyper-nostr-'
+const beeOpts = { keyEncoding: 'binary', valueEncoding: 'binary' }
 
 const sdk = await SDK.create({
   storage: '.hyper-nostr-relay',
@@ -15,9 +17,9 @@ export default async function createSwarm (_topic) {
   const topic = prefix + _topic
   const subs = new Map()
 
-  const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
+  const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic, beeOpts))
 
-  const discovery = await sdk.get(createTopicBuffer(topic)).catch(console.error)
+  const discovery = await sdk.get(createTopicBuffer(topic))
   const events = discovery.registerExtension(topic, {
     encoding: 'json',
     onmessage: event => {
@@ -38,5 +40,5 @@ export default async function createSwarm (_topic) {
 }
 
 function createTopicBuffer (topic) {
-  return require('crypto').createHash('sha256').update(topic).digest()
+  return createHash('sha256').update(topic).digest()
 }

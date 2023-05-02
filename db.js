@@ -73,8 +73,7 @@ function buildQueries (filters) {
             : entries.push(filtersHandlers[key](filter))
           return entries
         },
-        []
-        )
+        [])
     )
   )
 }
