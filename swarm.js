@@ -14,41 +14,29 @@ goodbye(_ => sdk.close())
 export default async function createSwarm(_topic) {
     const topic = prefix + _topic
     const subs = new Map
-    const cons = new Set
-    sdk.join(topic).flushed().then(_ => console.log(`listening on ${topic}`))
 
     const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
-    console.log('db created')
-    sdk.on('peer-add', peerInfo => {
-        if (peerInfo.topics.includes(topic)) {
-            const socket = sdk.connections.get(peerInfo.publicKey)
-            socket.on('data', _handleEvent)
-            cons.add(socket)
+    
+    const discovery = await sdk.get(createTopicBuffer(topic))
+    const events = discovery.registerExtension(topic, {
+        encoding: 'json',
+        onmessage: event => {
+            handleEvent(event)
+            subs.forEach(({ filters, socket }, key) => {
+                if (validateEvent(event, filters)) socket.send(["EVENT", key, event])
+            })
         }
     })
-    sdk.once('peer-remove', peerInfo => {
-        if (peerInfo.topics.includes(topic)) {
-            const socket = sdk.connections.get(peerInfo.publicKey)
-            cons.delete(socket)
-        }
-    })
-
 
     console.log(`swarm ${topic} created with hyper!`)
     return { subs, sendEvent, queryEvents }
 
     function sendEvent(event) {
         handleEvent(event)
-        cons.forEach(socket => socket.write(JSON.stringify(event)))
+        events.broadcast(event)
     }
+}
 
-    function _handleEvent(event) {
-        console.log(`got event from ${_topic}: `, topic)
-        console.log(event.toString())
-        handleEvent(JSON.parse(event))
-        subs.forEach(({ filters, socket }, key) =>
-            validateEvent(event, filters) &&
-            socket.send(["EVENT", key, event])
-        )
-    }
+function createTopicBuffer(topic) {
+    return require('crypto').createHash('sha256').update(topic).digest()
 }
