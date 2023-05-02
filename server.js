@@ -2,61 +2,13 @@
 
 import fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
-import goodbye from 'graceful-goodbye';
-import { createHash } from "crypto";
-import createDB from "./db.js";
-import * as SDK from 'hyper-sdk'
-
-const prefix = 'hyper-nostr-'
-
-const sdk = await SDK.create({
-    storage: '.hyper-nostr-relay',
-    autoJoin: true,
-})
-console.log('your key is', sdk.publicKey.toString('hex'))
-goodbye(_ => sdk.close())
-
-const topics = new Map
-async function createSwarm(_topic) {
-    const topic = prefix + _topic    
-    const subs = new Map
-    sdk.join(topic)
-
-    const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
-    const core = await sdk.get(topic)
-    sdk.on('peer-add', peerInfo => {
-        if (peerInfo.topics.includes(topic)) {
-            console.log('TODO: Discover what to do')
-        }
-    })
-    core.on('peer-add', peerInfo => {
-        console.log(`got a peer on ${_topic}, and they are${peerInfo.topics.includes(topic) ? '' : "n't"} in the same topic`)
-    })
-    const events = await core.registerExtension(topic, {
-        encoding: 'json',
-        onmessage: event => {
-            handleEvent(event)
-            subs.forEach(({ filters, socket }, key) =>
-                validateEvent(event, filters) &&
-                    socket.send(["EVENT", key, event])
-            )
-        },
-    })
-    
-
-    console.log(`swarm ${topic} created with hyper!`)
-    return { subs, sendEvent, handleEvent, queryEvents }
-
-    function sendEvent(event) {
-        handleEvent(value)
-        events.broadcast(event)
-    }
-}
+import createSwarm from "./swarm.js";
 
 const fastify_instance = fastify()
 const f_i = fastify_instance
 const port = process.argv[2] || 3000
 
+const topics = new Map
 
 f_i.register(fastifyWebsocket)
 f_i.register(async function (fastify) {
@@ -67,7 +19,7 @@ f_i.register(async function (fastify) {
         if (!topics.has(topic)) {
             topics.set(topic, await createSwarm(topic))
         }
-        const { sendEvent, subs, handleEvent, queryEvents } = topics.get(topic)
+        const { sendEvent, subs, queryEvents } = topics.get(topic)
         const { socket } = con
         console.log('ws connection stablished')
 
@@ -104,7 +56,3 @@ f_i.listen({ port }, err => {
     if (err) throw err
     console.log(`listening on ${port}`)
 })
-
-function topicBuffer(topic) {
-    return createHash('sha256').update(prefix + topic).digest()
-}
