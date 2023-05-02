@@ -2,6 +2,8 @@
 # https://github.com/geduldig/TwitterAPI
 import sys
 import os
+import traceback
+import logging
 import math
 import requests
 import shutil
@@ -27,7 +29,8 @@ from TwitterAPI import TwitterAPI
 def moveBlockTime():
     try:
         shutil.move(os.getcwd()+"/BLOCK_TIME", os.getcwd()+"/OLD_BLOCK_TIME")
-    except:
+    except BaseException as error:
+        print('moveBlockTime(): {}'.format(error))
         f = open("BLOCK_TIME", "w")
         f.write("" + 0 + "\n")
         f.close()
@@ -59,7 +62,8 @@ def blockTime():
         f.write("" + block_height + "\n")
         f.close()
         return block_time
-    except:
+    except BaseException as error:
+        print('blockTime(): {}'.format(error))
         return 0
         pass
 
@@ -274,8 +278,6 @@ def is_tool(name):
 
 def which_tool(name):
     """Check whether `name` is on PATH and marked as executable."""
-
-    # from whichcraft import which
     from shutil import which
 
     # from distutils.spawn import find_executable
@@ -289,11 +291,96 @@ print("NOSTRIL="+str(NOSTRIL))
 WEBSOCAT = is_tool('websocat')
 print("WEBSOCAT="+str(WEBSOCAT))
 
-print(BTC_UNIX_TIME())
-BTC_UNIX_TIME()
+    try:
+        getMempoolAPI(
+            'https://mempool.space/api/v1/difficulty-adjustment', DIFFICULTY)
+        getMempoolAPI(
+            'https://mempool.space/api/blocks/tip/height', BLOCK_TIP_HEIGHT)
+    except BaseException as error:
+        print('getMempoolAPI(): {}'.format(error))
 
-global GPGID
-GPGID = 'BB06757B'
-HEX_MESSAGE_DIGEST(GPGID, "test message")
-HEX_MESSAGE_DIGEST(GPGID, str(NOSTRIL))
-syndicateMessage(blockTime())
+    """declare some global variables"""
+    global NOSTRIL, WEBSOCAT, YARN, GPGID
+    GPGID = 'BB06757B'
+    NOSTRIL = is_tool('nostril')
+    WEBSOCAT = is_tool('websocat')
+    YARN = is_tool('yarn')
+    try:
+        global weeble
+        weeble = -1
+        BTC_UNIX_TIME()
+    except NameError:
+        print("BTC_UNIX_TIME() not available yet...")
+    except BaseException as error:
+        print('BTC_UNIX_TIME(): {}'.format(error))
+
+    global message
+    message = ""
+    global digest
+    digest = ""
+
+    if DEBUG:
+        print("NOSTRIL="+str(NOSTRIL))
+        print("which nostril"+which_tool('nostril'))
+        print("WEBSOCAT="+str(WEBSOCAT))
+        print("YARN="+str(YARN))
+        print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
+
+        HEX_MESSAGE_DIGEST(GPGID, "test message")
+        HEX_MESSAGE_DIGEST(GPGID, str(NOSTRIL))
+
+        if (is_tool('nostril')):
+            cmd_str = \
+                        "nostril --envelope --content '" \
+                        + message +\
+                        " " \
+                        + digest +\
+                        "' | websocat ws://localhost:3000/nostr"
+            print(cmd_str)
+            subprocess.run(cmd_str, shell=True)
+
+    if DEBUG:
+        print(blockTime())
+        print(getSeconds())
+        print(getMillis())
+
+        m = hashlib.sha256()
+        m.update(b"Nobody inspects")
+        m.update(b" the spammish repetition")
+        print(m.digest())
+# b'\x03\x1e\xdd}Ae\x15\x93\xc5\xfe\\\x00o\xa5u+7\xfd\xdf\xf7\xbcN\x84:\xa6\xaf\x0c\x95\x0fK\x94\x06'
+        print(m.digest_size)
+        print("WEEBLE_WOBBLE="+WEEBLE_WOBBLE())
+# 32
+        print(m.block_size)
+# 64
+        print(m.hexdigest())
+
+
+global DEBUG
+DEBUG = 1
+try:
+    initialize(DEBUG)
+except BaseException as error:
+    print('initialize(DEBUG): {}'.format(error))
+try:
+    searchBitcoin()
+except BaseException as error:
+    print('searchBitcoin(): {}'.format(error))
+try:
+    searchTwitter('bitcoin')
+except BaseException as error:
+    print('searchTwitter(bitcoin): {}'.format(error))
+try:
+    searchTwitter('nostr')
+except BaseException as error:
+    print('searchTwitter(nostr): {}'.format(error))
+try:
+    tweetBlockTime(blockTime())
+except BaseException as error:
+    print('tweetBlockTime(blockTime(): {}'.format(error))
+try:
+    syndicateMessage(blockTime())
+except BaseException as error:
+    print('syndicateMessage(blockTime(): {}'.format(error))
+
