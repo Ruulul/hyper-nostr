@@ -29,6 +29,7 @@ export default async function createSwarm(_topic) {
     const events = await core.registerExtension(topic, {
         encoding: 'json',
         onmessage: event => {
+            console.log(`got event from ${_topic}: `, topic)
             handleEvent(event)
             subs.forEach(({ filters, socket }, key) =>
                 validateEvent(event, filters) &&
