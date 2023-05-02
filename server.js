@@ -2,39 +2,44 @@
 
 import fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
-import Hyperswarm from "hyperswarm";
 import goodbye from 'graceful-goodbye';
 import { createHash } from "crypto";
 import createDB from "./db.js";
+import * as SDK from 'hyper-sdk'
+
+const prefix = 'hyper-nostr-'
+
+const sdk = await SDK.create({
+    storage: '.hyper-nostr-relay',
+    autoJoin: true,
+})
+console.log('your key is', sdk.publicKey.toString('hex'))
+goodbye(_ => sdk.close())
 
 const topics = new Map
-async function createSwarm(topic) {
-    const { filterEvents, handleEvent, queryEvents } = await createDB(topic)
-    const swarm = new Hyperswarm()
-    goodbye(async _ => {
-        swarm.connections.forEach(conn => conn.end())
-        await swarm.destroy()
-        console.log(`swarm ${topic} destroyed!`)
-    })
-    const conns = new Set
+async function createSwarm(topic) {    
     const subs = new Map
-    await swarm.join(topicBuffer(topic)).flushed()
-    swarm.on('connection', stream => {
-        console.log('swarm connection on', topic)
-        conns.add(stream)
-        stream.once('close', _ => conns.delete(stream))
-        stream.on('error', err => console.log(`got error ${err.cause || err.message || err.name}`))
-        stream.on('data', data => {
-            const event = JSON.parse(data)
-            subs.forEach(({ filters, socket }, key) =>
-                filterEvents([event], filters)
-                    .map(event => socket.send(["EVENT", key, event]))
-            )
+    sdk.join(topicBuffer(topic)).flushed()
+
+    const events = await sdk.registerExtension(prefix + topic, {
+        encoding: 'json',
+        onmessage: event => {
             handleEvent(event)
-        })
+            subs.forEach(({ filters, socket }, key) =>
+                validateEvent(event, filters) &&
+                    socket.send(["EVENT", key, event])
+            )
+        },
     })
-    console.log(`swarm ${topic} created!`)
-    return { conns, subs, handleEvent, queryEvents }
+    
+    const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
+
+    console.log(`swarm ${topic} created with hyper!`)
+    return { subs, sendEvent, handleEvent, queryEvents }
+
+    function sendEvent(event) {
+        events.broadcast(event)
+    }
 }
 
 const fastify_instance = fastify()
@@ -46,25 +51,26 @@ f_i.register(fastifyWebsocket)
 f_i.register(async function (fastify) {
     fastify.get('/:topic', { websocket: true }, async (con, req) => {
         const { topic } = req.params
+        console.log('ws connection started')
         if (!topic) return
         if (!topics.has(topic)) {
             topics.set(topic, await createSwarm(topic))
         }
-        const { conns, subs, handleEvent, queryEvents } = topics.get(topic)
+        const { sendEvent, subs, handleEvent, queryEvents } = topics.get(topic)
         const { socket } = con
-        console.log('ws connection')
+        console.log('ws connection stablished')
 
-        socket.on('message', message => {
+        socket.on('message', async message => {
             const [type, value, ...rest] = JSON.parse(message)
             switch (type) {
                 case 'EVENT':
-                    conns.forEach(stream => stream.write(JSON.stringify(value)))
+                    sendEvent(value)
                     handleEvent(value)
                     socket.send(["OK", value.id, true, ""])
                     break;
                 case 'REQ':
-                    subs.set(value, { filters: rest, socket })
-                    queryEvents(rest).map(event => ["EVENT", value, event]).forEach(event => socket.send(event))
+                    subs.set(value, { filters: rest, socket });
+                    (await queryEvents(rest)).map(event => ["EVENT", value, event]).forEach(event => socket.send(event))
                     socket.send(["EOSE", value])
                     break;
                 case 'CLOSE':
@@ -90,5 +96,5 @@ f_i.listen({ port }, err => {
 })
 
 function topicBuffer(topic) {
-    return createHash('sha256').update('hyper-nostr-' + topic).digest()
+    return createHash('sha256').update(prefix + topic).digest()
 }

@@ -1,6 +1,6 @@
 {
   "name": "hyper-nostr",
-  "version": "0.5.9",
+  "version": "0.6.0",
   "description": "",
   "main": "server.js",
   "type": "module",
@@ -12,8 +12,8 @@
     "@fastify/websocket": "^8.0.0",
     "fastify": "^4.17.0",
     "graceful-goodbye": "^1.2.1",
-    "hyperswarm": "^4.4.1",
-    "lowdb": "^6.0.1"
+    "hyper-sdk": "^4.2.4",
+    "hyperbeedeebee": "^2.0.0"
   },
   "keywords": [],
   "author": "",
