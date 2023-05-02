@@ -83,18 +83,25 @@ def WEEBLE():
     print("w_seconds="+str(w_seconds))
     w_block_time = blockTime()
     # assert w_block_time == 0
-    assert w_block_time > 0
     print("w_block_time="+str(w_block_time))
     # weeble = math.floor(w_seconds / w_block_time)
-    weeble = w_seconds / w_block_time
-    print("weeble="+str(weeble))
+    if w_block_time > 0:
+        weeble = w_seconds / w_block_time
+        print("weeble="+str(weeble))
+    if w_block_time == 0:
+        weeble = w_seconds / 1
+        print("weeble="+str(weeble))
     return weeble
 
 
 def WOBBLE():
-    """globally initialized in WEEBLE"""
-    wobble = w_seconds % w_block_time
-    print("wobble="+str(wobble))
+    """globally initialized in WOBBLE"""
+    if w_block_time > 0:
+        wobble = w_seconds % w_block_time
+        print("wobble="+str(wobble))
+    if w_block_time == 0:
+        wobble = w_seconds / 1
+        print("wobble="+str(wobble))
     return wobble
 
 
