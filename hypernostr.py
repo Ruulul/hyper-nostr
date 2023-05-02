@@ -112,18 +112,27 @@ def getData(filename):
     f.close()
     return data
 
+
 def tweetBlockTime(block_time):
-    if (block_time != obt):
-        # r = api.request('statuses/update', {'status': block_time+":"+getSeconds })
-        r = api.request('statuses/update', {'status': BTC_UNIX_TIME() })
-        # print(BTC_UNIX_TIME)
-        # exit()
-        if (r.status_code == 200):
-            print('api.request SUCCESS')
+    print(str(w_block_time)+":"+str(getSeconds))
+    print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
+    print(not DEBUG)
+    if not DEBUG:
+        if (w_block_time != obt):
+            r = api.request('statuses/update',
+                            {'status': str(w_block_time)+":"+str(getSeconds)})
+            r = api.request('statuses/update',
+                            {'status': str(BTC_UNIX_TIME())})
+            # exit()
+            if (r.status_code == 200):
+                print('api.request SUCCESS')
+            else:
+                print('api.request FAILURE')
         else:
-            print('api.request FAILURE')
-    else:
-        print('tweetBlockTime() FAILURE')
+            print(w_block_time == obt)
+            print('w_block_time='+w_block_time)
+            print('tweetBlockTime() FAILURE')
+
 
 def getMempoolAPI(url,DATA):
     # print(url)
