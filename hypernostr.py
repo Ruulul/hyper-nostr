@@ -63,7 +63,7 @@ def blockTime():
         block_time = blockcypher.get_latest_block_height(coin_symbol='btc')
         # assert block_time == 0
         assert block_time > 0
-        print("block_time="+block_time)
+        print("block_time="+str(block_time))
         global block_height
         block_height = repr(block_time)
         print("block_height="+block_height)
@@ -127,7 +127,7 @@ def getData(filename):
 
 
 def tweetBlockTime(block_time):
-    print(str(w_block_time)+":"+str(getSeconds))
+    print(str(w_block_time)+":"+str(getSeconds()))
     print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
     print(not DEBUG)
     if not DEBUG:
@@ -153,50 +153,79 @@ def getMempoolAPI(url, DATA):
         r = requests.get(url, stream=True)
         f.writelines(r.iter_content(1024))
         response = getData(DATA)
-        print(getData(DATA))
-        print(response)
+        if DEBUG:
+            print(getData(DATA))
+            print(response)
 
 
 def searchBitcoin():
     global r
     r = api.request('search/tweets', {'q': 'bitcoin'})
     for item in r:
-        print(item)
+        # print(item)
 
-BLOCK_TIP_HEIGHT        = os.path.expanduser('./BLOCK_TIP_HEIGHT')
-DIFFICULTY              = os.path.expanduser('./DIFFICULTY')
-OLD_BLOCK_TIME          = os.path.expanduser('./OLD_BLOCK_TIME')
-ACCESS_TOKEN_SECRET     = os.path.expanduser('./twitter_access_tokens/access_token_secret.txt')
-ACCESS_TOKEN            = os.path.expanduser('./twitter_access_tokens/access_token.txt')
-CONSUMER_API_KEY        = os.path.expanduser('./twitter_access_tokens/consumer_api_key.txt')
-CONSUMER_API_SECRET_KEY = os.path.expanduser('./twitter_access_tokens/consumer_api_secret_key.txt')
+        if DEBUG:
+            try:
+                print(item)
+                # print(dir(item))
+                # print(str(item))
+                print("                                    ")
+            except UnicodeDecodeError:
+                item = print(decode(item))
+            except BaseException as error:
+                print('searchBitcoin(): {}'.format(error))
+            finally:
+                item = str('decoding error!')
+        with open('search/tweets/bitcoin', 'wb') as f:
+            pickle.dump(item, f)
+        data = getData('search/tweets/bitcoin')
+        if DEBUG:
+            # prints byte like objects
+            try:
+                print(data)
+            except UnicodeDecodeError:
+                data = decode(data)
+            except BaseException as error:
+                print('searchBitcoin(): {}'.format(error))
+            finally:
+                data = str('decoding error!')
 
-cak  = getData(CONSUMER_API_KEY)
-cask = getData(CONSUMER_API_SECRET_KEY)
-at   = getData(ACCESS_TOKEN)
-ats  = getData(ACCESS_TOKEN_SECRET)
-obt  = getData(OLD_BLOCK_TIME)
 
-api  = TwitterAPI(cak,cask,at,ats)
+def searchTwitter(term):
+    global r
+    r = api.request('search/tweets', {'q': term})
+    for item in r:
+        with open('search/tweets/'+term, 'wb') as f:
+            pickle.dump(item, f)
+        data = getData('search/tweets/'+term)
+        if DEBUG:
+            try:
+                # convert bytes (python 3) or unicode (python 2) to str
+                print(type(data))
+                if str(type(data)) == "<class 'bytes'>":
+                    # only possible in Python 3
+                    try:
+                        data = data.decode('latin-1')
+                    except UnicodeDecodeError:
+                        data = data.decode('UTF-16LE')
+                        # data = str(data)[2:-1]
+                    except BaseException as error:
+                        print('searchTwitter(): {}'.format(error))
+                    print(data)
+                elif str(type(data)) == "<type 'unicode'>":
+                    # only possible in Python 2
+                    data = str(data)
+                    print(data)
+                else:
+                    print(decode(data))
 
-getMempoolAPI('https://mempool.space/api/v1/difficulty-adjustment', DIFFICULTY)
-getMempoolAPI('https://mempool.space/api/blocks/tip/height',        BLOCK_TIP_HEIGHT)
-# searchBitcoin()
-print(blockTime())
-print(getMillis())
-print(getSeconds())
-# tweetBlockTime(blockTime())
-m = hashlib.sha256()
-m.update(b"Nobody inspects")
-m.update(b" the spammish repetition")
-print(m.digest())
-# b'\x03\x1e\xdd}Ae\x15\x93\xc5\xfe\\\x00o\xa5u+7\xfd\xdf\xf7\xbcN\x84:\xa6\xaf\x0c\x95\x0fK\x94\x06'
-print(m.digest_size)
-print("WEEBLE_WOBBLE="+WEEBLE_WOBBLE())
-# 32
-print(m.block_size)
-# 64
-print(m.hexdigest())
+            except UnicodeDecodeError:
+                data = decode(data)
+            except BaseException as error:
+                print('searchBitcoin(): {}'.format(error))
+            finally:
+                data = str('decoding error!')
+        f.close()
 
 
 def HEX_MESSAGE_DIGEST(recipient, message):
