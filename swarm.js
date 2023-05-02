@@ -13,12 +13,12 @@ goodbye(_ => sdk.close())
 
 export default async function createSwarm(_topic) {
     const topic = prefix + _topic
-    const topic_hash = createTopicBuffer(topic)
     const subs = new Map
     const cons = new Set
-    sdk.join(topic_hash)
+    sdk.join(topic).flushed().then(_ => console.log(`listening on ${topic}`))
 
     const { validateEvent, handleEvent, queryEvents } = await createDB(await sdk.getBee(topic))
+    console.log('db created')
     sdk.on('peer-add', peerInfo => {
         if (peerInfo.topics.includes(topic_hash)) {
             const socket = sdk.connections.get(peerInfo.publicKey)
