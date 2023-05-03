@@ -9,3 +9,7 @@ twitter_access_tokens.zip
 twitter_access_tokens.zip.gpg
 twitter_access_tokens/
 keys.txt
+package-lock.json
+search/tweets/bitcoin
+search/tweets/nostr
+yarn.lock
