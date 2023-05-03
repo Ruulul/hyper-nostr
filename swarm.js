@@ -1,11 +1,12 @@
 import createDB from './db.js'
 import * as SDK from 'hyper-sdk'
 import Autobase from 'autobase'
-import Hyperbee from 'hyperbee'
+import Autodeebee from 'hyperdeebee/autodeebee.js'
 import goodbye from 'graceful-goodbye'
 import { createHash } from 'crypto'
 
 const prefix = 'hyper-nostr-'
+const beeOpts = { keyEncoding: 'binary', valueEncoding: 'binary' }
 
 const sdk = await SDK.create({
   storage: '.hyper-nostr-relay',
@@ -22,11 +23,11 @@ export default async function createSwarm (_topic) {
   const localInput = IOCores.get({ name: 'local-input' })
   const localOutput = IOCores.get({ name: 'local-output' })
   const autobase = new Autobase({ localInput, localOutput })
-  await createHyperbee(autobase)
+  const bee = new Autodeebee(autobase, beeOpts)
 
   const knownDBs = new Set()
   knownDBs.add(localInput.url)
-  const { validateEvent, handleEvent, queryEvents } = await createDB(autobase)
+  const { validateEvent, handleEvent, queryEvents } = await createDB(bee)
 
   const discovery = await sdk.get(createTopicBuffer(topic))
   const events = discovery.registerExtension(topic, {
@@ -72,20 +73,4 @@ export default async function createSwarm (_topic) {
 
 function createTopicBuffer (topic) {
   return createHash('sha256').update(topic).digest()
-}
-
-async function createHyperbee (autobase) {
-  autobase.start({
-    unwrap: true,
-    view: core => new Hyperbee(core, { extension: false }),
-    apply: async (bee, batch) => {
-      const b = bee.batch({ update: false })
-      for (const node of batch) {
-        const { type, key, value } = JSON.parse(node.value.toString())
-        if (type === 'put') await b.put(key, value)
-        if (type === 'del') await b.del(key)
-      }
-      await b.flush()
-    }
-  })
 }

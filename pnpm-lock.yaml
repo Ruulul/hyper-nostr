@@ -5,8 +5,11 @@ dependencies:
     specifier: ^8.0.0
     version: 8.0.0
   autobase:
-    specifier: 1.0.0-alpha.8
-    version: 1.0.0-alpha.8
+    specifier: github:holepunchto/autobase
+    version: github.com/holepunchto/autobase/7719d9a87fd191563044cb14468340ce42b6d4c7
+  autodeebee:
+    specifier: ^1.0.1
+    version: 1.0.1
   fastify:
     specifier: ^4.17.0
     version: 4.17.0
@@ -19,9 +22,9 @@ dependencies:
   hyperbee:
     specifier: ^2.8.0
     version: 2.8.0
-  hyperbeedeebee:
-    specifier: ^2.0.0
-    version: 2.0.0
+  hyperdeebee:
+    specifier: github:Telios-org/hyperdeebee
+    version: github.com/Telios-org/hyperdeebee/d0cad8b133700d11797963b2547214db91258378
 
 devDependencies:
   standard:
@@ -318,15 +321,11 @@ packages:
     engines: {node: '>=8.0.0'}
     dev: false
 
-  /autobase@1.0.0-alpha.8:
-    resolution: {integrity: sha512-Dnlw2u0DCZEY6CPbeLW9YI9MIwR+3kCQueqhzt8XZB98frplQrCtzK8DOjju+mYUGdFviyTUmYto9LCF3aXWdQ==}
+  /autodeebee@1.0.1:
+    resolution: {integrity: sha512-JVAWOZUt4gmxvWWZngAsAPnVrlm+LEQu8QoqB+J8sCsyyTg+aSxcNrfOI3bqlGlQwrBp6pZiQaMeRm48hxiF/w==}
     dependencies:
-      codecs: 2.2.0
-      compact-encoding: 2.11.0
-      debounceify: 1.0.0
-      mutexify: 1.4.0
-      safety-catch: 1.0.2
-      streamx: 2.13.2
+      b4a: 1.6.3
+      hyperbee: 2.8.0
     dev: false
 
   /available-typed-arrays@1.0.5:
@@ -463,11 +462,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /cbor@8.1.0:
-    resolution: {integrity: sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==}
-    engines: {node: '>=12.19'}
-    dependencies:
-      nofilter: 3.1.0
+  /cbor-sync@1.0.4:
+    resolution: {integrity: sha512-GWlXN4wiz0vdWWXBU71Dvc1q3aBo0HytqwAZnXF1wOwjqNnDWA1vZ1gDMFLlqohak31VQzmhiYfiCX5QSSfagA==}
     dev: false
 
   /chacha20-universal@1.0.4:
@@ -483,10 +479,6 @@ packages:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
     dev: true
-
-  /codecs@2.2.0:
-    resolution: {integrity: sha512-+xi2ENsvchtUNa8oBUU58gHgmyN6BEEeZ8NIEgeQ0XnC+AoyihivgZYe+OOiNi+fLy/NUowugwV5gP8XWYDm0Q==}
-    dev: false
 
   /codecs@3.1.0:
     resolution: {integrity: sha512-Dqx8NwvBvnMeuPQdVKy/XEF71igjR5apxBvCGeV0pP1tXadOiaLvDTXt7xh+/5wI1ASB195mXQGJbw3Ml4YDWQ==}
@@ -1320,13 +1312,6 @@ packages:
       streamx: 2.13.2
     dev: false
 
-  /hyperbeedeebee@2.0.0:
-    resolution: {integrity: sha512-e5Q0MNrppundC87ZS2VU2Pv5IhJ36j/O2D+flQDkjMoygMEv8bb4H2bicmPV2p6SpaDE9dRZ3B9nVWPhVDkGQA==}
-    dependencies:
-      bson: 4.7.2
-      cbor: 8.1.0
-    dev: false
-
   /hyperblobs@2.2.1:
     resolution: {integrity: sha512-xh9ubLBVX816h20e3aoVMS4WO9C7BL04afnIglBdDJN0AR+cFaT3bZFbvKzlm1YYlSmQ+1TiNfD2uXaZk7XPdw==}
     dependencies:
@@ -1741,11 +1726,6 @@ packages:
   /node-gyp-build@4.6.0:
     resolution: {integrity: sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==}
     hasBin: true
-    dev: false
-
-  /nofilter@3.1.0:
-    resolution: {integrity: sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==}
-    engines: {node: '>=12.19'}
     dev: false
 
   /noise-curve-ed@2.0.1:
@@ -2704,4 +2684,27 @@ packages:
     resolution: {integrity: sha512-p3DhBJckAZj5XwYMJYeLlkgJJ+aEyCoOjTpK17I/MofVs70eR+WQPXQpk1LEmMweB2JbUx0naFXPPI2EGaVX6w==}
     dependencies:
       b4a: 1.6.3
+    dev: false
+
+  github.com/Telios-org/hyperdeebee/d0cad8b133700d11797963b2547214db91258378:
+    resolution: {tarball: https://codeload.github.com/Telios-org/hyperdeebee/tar.gz/d0cad8b133700d11797963b2547214db91258378}
+    name: hyperdeebee
+    version: 2.0.1
+    dependencies:
+      bson: 4.7.2
+      cbor-sync: 1.0.4
+    dev: false
+
+  github.com/holepunchto/autobase/7719d9a87fd191563044cb14468340ce42b6d4c7:
+    resolution: {tarball: https://codeload.github.com/holepunchto/autobase/tar.gz/7719d9a87fd191563044cb14468340ce42b6d4c7}
+    name: autobase
+    version: 1.0.0-alpha.8
+    dependencies:
+      b4a: 1.6.3
+      codecs: 3.1.0
+      compact-encoding: 2.11.0
+      debounceify: 1.0.0
+      mutexify: 1.4.0
+      safety-catch: 1.0.2
+      streamx: 2.13.2
     dev: false
