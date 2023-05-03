@@ -91,7 +91,6 @@ def WEEBLE_WOBBLE():
 
 def WEEBLE():
     global weeble
-    global wobble
     global w_seconds
     global w_block_time
     w_seconds = getSeconds()
@@ -101,12 +100,11 @@ def WEEBLE():
     # assert w_block_time == 0
     if VERBOSE:
         print("w_block_time="+str(w_block_time))
-    # weeble = math.floor(w_seconds / w_block_time)
     if w_block_time > 0:
         weeble = math.floor(w_seconds / w_block_time)
         if VERBOSE:
             print("weeble="+str(weeble))
-    if w_block_time == 0:
+    if w_block_time <= 0:
         weeble = math.floor(w_seconds / 1)
         if VERBOSE:
             print("weeble="+str(weeble))
@@ -114,6 +112,8 @@ def WEEBLE():
 
 
 def WOBBLE():
+    global wobble
+    WEEBLE()
     """globally initialized in WOBBLE"""
     if w_block_time > 0:
         wobble = w_seconds % w_block_time
