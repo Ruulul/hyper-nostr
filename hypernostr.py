@@ -103,11 +103,11 @@ def WEEBLE():
         print("w_block_time="+str(w_block_time))
     # weeble = math.floor(w_seconds / w_block_time)
     if w_block_time > 0:
-        weeble = w_seconds / w_block_time
+        weeble = math.floor(w_seconds / w_block_time)
         if VERBOSE:
             print("weeble="+str(weeble))
     if w_block_time == 0:
-        weeble = w_seconds / 1
+        weeble = math.floor(w_seconds / 1)
         if VERBOSE:
             print("weeble="+str(weeble))
     return weeble
@@ -137,8 +137,12 @@ def getData(filename):
 def tweetBlockTime(block_time):
     if VERBOSE:
         print(str(w_block_time)+":"+str(getSeconds()))
-        print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
-        print("DEBUG=" + DEBUG)
+        print("BTC_UNIX_TIME() = " + str(BTC_UNIX_TIME()))
+    print("WEEBLE() = " + str(WEEBLE()))
+    print("WOBBLE() = " + str(WOBBLE()))
+    print("WEEBLE:WOBBLE = " + str(WEEBLE()) + ":" + str(WOBBLE()))
+    print("WEEBLE:WOBBLE = " + str(WEEBLE_WOBBLE()))
+    print("DEBUG = " + str(DEBUG))
     if not DEBUG:
         if (w_block_time != obt):
             r = api.request('statuses/update',
@@ -256,12 +260,14 @@ def HEX_MESSAGE_DIGEST(recipient, message):
     if not is_tool('nostril'):
         which_tool('nostril')
     n = hashlib.sha256()
+    if VERBOSE:
+        print(n.digest())
+    print("n.digest()=" + str(n.digest()))
     n.update(bytes(recipient, 'utf-8'))
     n.update(bytes(message, 'utf-8'))
     n.update(bytes(btc_unix_time, 'utf-8'))
     if VERBOSE:
         print(n.digest())
-    # b'\x03\x1e\xdd}Ae\x15\x93\xc5\xfe\\\x00o\xa5u+7\xfd\xdf\xf7\xbcN\x84:\xa6\xaf\x0c\x95\x0fK\x94\x06'
         print(n.digest_size)
     # 32
         print(n.block_size)
@@ -274,6 +280,7 @@ def syndicateMessage(block_time):
     print(not DEBUG)
     print("block_time="+str(block_time))
     print("obt="+str(obt.decode()))
+    print("WEEBLE:WOBBLE = " + str(WEEBLE_WOBBLE()))
     if not DEBUG:
         if (block_time != obt):
             if is_tool('nostril'):
@@ -283,18 +290,21 @@ def syndicateMessage(block_time):
                     HEX_MESSAGE_DIGEST(GPGID, message)
                 cmd_str = \
                     "nostril --envelope --content '" \
-                    + message + " " + digest + \
+                    + str(WEEBLE_WOBBLE()) + " " + \
+                    + message + ":" + digest + \
                     "' | websocat ws://localhost:3000/nostr"
                 if VERBOSE:
                     print(cmd_str)
+                print("cmd_str=" + cmd_str)
                 subprocess.run(cmd_str, shell=True)
                 r = api.request('statuses/update',
                                 {'status':
                                  "GPGID:" + GPGID
                                  + ':MESSAGE:' + message
                                  + ':DIGEST:' + digest
-                                 + ':TOOL:' + str(is_tool('nostril'))
-                                 + ':WHICHTOOL:' + str(which_tool('nostril'))
+                                 # + ':TOOL:' + str(is_tool('nostril'))
+                                 # + ':WHICHTOOL:' + str(which_tool('nostril'))
+                                 + ':WEEBLE:WOBBLE:' + WEEBLE_WOBBLE()
                                  + ':BTC:UNIX:' + BTC_UNIX_TIME()
                                  })
                 if VERBOSE:
@@ -409,7 +419,17 @@ def initialize(DEBUG):
     NOSTRIL = is_tool('nostril')
     WEBSOCAT = is_tool('websocat')
     YARN = is_tool('yarn')
+    global message, digest, cmd_str
+    message = ""
+    digest = ""
+    cmd_str = ""
     try:
+        # if YARN:
+        #     try:
+        #         cmd_str = "yarn && yarn install && yarn run start"
+        #         subprocess.run(cmd_str, shell=True)
+        #     except BaseException as error:
+        #         print('yarn && yarn install && yarn run start: {}'.format(error))
         global weeble
         weeble = -1
         BTC_UNIX_TIME()
@@ -417,10 +437,6 @@ def initialize(DEBUG):
         print("BTC_UNIX_TIME() not available yet...")
     except BaseException as error:
         print('BTC_UNIX_TIME(): {}'.format(error))
-
-    global message, digest
-    message = ""
-    digest = ""
 
     if VERBOSE:
         print("NOSTRIL="+str(NOSTRIL))
@@ -441,6 +457,7 @@ def initialize(DEBUG):
                         "' | websocat ws://localhost:3000/nostr"
             if VERBOSE:
                 print(cmd_str)
+            print(cmd_str)
             subprocess.run(cmd_str, shell=True)
 
     if VERBOSE:
@@ -464,7 +481,7 @@ def initialize(DEBUG):
 global DEBUG
 DEBUG = 1
 global VERBOSE
-VERBOSE = 0
+VERBOSE = 1
 try:
     initialize(DEBUG)
 except BaseException as error:
