@@ -47,13 +47,20 @@ def moveBlockTime():
 
 def getMillis():
     global millis
-    millis = int(round(time.time() * 1000))
+    millis = 0
+    millis = int(round(time.time() * 1000)/1000)
+    if DEBUG or  VERBOSE:
+        print("millis= " + str(millis))
     return millis
 
 
 def getSeconds():
+    getMillis()
     global seconds
+    seconds = 0
     seconds = int(round(time.time()))
+    if DEBUG or  VERBOSE:
+        print("seconds=" + str(seconds))
     return seconds
 
 
