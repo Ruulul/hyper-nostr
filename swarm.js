@@ -22,6 +22,7 @@ export default async function createSwarm (_topic) {
   const IOCores = await sdk.namespace(topic)
   const localInput = IOCores.get({ name: 'local-input' })
   const localOutput = IOCores.get({ name: 'local-output' })
+  await Promise.all([localInput.ready(), localOutput.ready()])
   const autobase = new Autobase({ localInput, localOutput })
   const bee = new Autodeebee(autobase, beeOpts)
 
