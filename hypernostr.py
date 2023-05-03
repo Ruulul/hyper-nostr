@@ -49,17 +49,18 @@ def getMillis():
     global millis
     millis = 0
     millis = int(round(time.time() * 1000)/1000)
-    if DEBUG or  VERBOSE:
+    if DEBUG and VERBOSE:
         print("millis= " + str(millis))
     return millis
 
 
 def getSeconds():
-    getMillis()
+    if DEBUG:
+        getMillis()
     global seconds
     seconds = 0
     seconds = int(round(time.time()))
-    if DEBUG or  VERBOSE:
+    if DEBUG and VERBOSE:
         print("seconds=" + str(seconds))
     return seconds
 
@@ -494,10 +495,12 @@ def initialize(DEBUG):
 
 global DEBUG
 DEBUG = 1
-print("DEBUG="+str(DEBUG))
+if DEBUG:
+    print("DEBUG="+str(DEBUG))
 global VERBOSE
-VERBOSE = 1
-print("VERBOSE="+str(VERBOSE))
+VERBOSE = 0
+if VERBOSE:
+    print("VERBOSE="+str(VERBOSE))
 try:
     initialize(DEBUG)
 except BaseException as error:
