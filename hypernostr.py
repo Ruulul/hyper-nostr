@@ -186,9 +186,9 @@ def searchBitcoin():
         if DEBUG:
             try:
                 if VERBOSE:
-                    # print(item)
-                    # print(dir(item))
-                    # print(str(item))
+                    # print(item) # not what we want
+                    # print(dir(item)) #  not what we want
+                    print(str(item))
                     print("                                    ")
             except UnicodeDecodeError:
                 item = print(decode(item))
