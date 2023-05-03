@@ -63,10 +63,12 @@ def blockTime():
         block_time = blockcypher.get_latest_block_height(coin_symbol='btc')
         # assert block_time == 0
         assert block_time > 0
-        print("block_time="+str(block_time))
+        if VERBOSE:
+            print("block_time="+str(block_time))
         global block_height
         block_height = repr(block_time)
-        print("block_height="+block_height)
+        if VERBOSE:
+            print("block_height="+block_height)
         f = open("BLOCK_TIME", "w")
         f.write("" + block_height + "\n")
         f.close()
@@ -93,17 +95,21 @@ def WEEBLE():
     global w_seconds
     global w_block_time
     w_seconds = getSeconds()
-    print("w_seconds="+str(w_seconds))
+    if VERBOSE:
+        print("w_seconds="+str(w_seconds))
     w_block_time = blockTime()
     # assert w_block_time == 0
-    print("w_block_time="+str(w_block_time))
+    if VERBOSE:
+        print("w_block_time="+str(w_block_time))
     # weeble = math.floor(w_seconds / w_block_time)
     if w_block_time > 0:
         weeble = w_seconds / w_block_time
-        print("weeble="+str(weeble))
+        if VERBOSE:
+            print("weeble="+str(weeble))
     if w_block_time == 0:
         weeble = w_seconds / 1
-        print("weeble="+str(weeble))
+        if VERBOSE:
+            print("weeble="+str(weeble))
     return weeble
 
 
@@ -111,10 +117,12 @@ def WOBBLE():
     """globally initialized in WOBBLE"""
     if w_block_time > 0:
         wobble = w_seconds % w_block_time
-        print("wobble="+str(wobble))
+        if VERBOSE:
+            print("wobble="+str(wobble))
     if w_block_time == 0:
         wobble = w_seconds / 1
-        print("wobble="+str(wobble))
+        if VERBOSE:
+            print("wobble="+str(wobble))
     return wobble
 
 
@@ -127,9 +135,10 @@ def getData(filename):
 
 
 def tweetBlockTime(block_time):
-    print(str(w_block_time)+":"+str(getSeconds()))
-    print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
-    print(not DEBUG)
+    if VERBOSE:
+        print(str(w_block_time)+":"+str(getSeconds()))
+        print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
+        print("DEBUG=" + DEBUG)
     if not DEBUG:
         if (w_block_time != obt):
             r = api.request('statuses/update',
@@ -138,22 +147,27 @@ def tweetBlockTime(block_time):
                             {'status': str(BTC_UNIX_TIME())})
             # exit()
             if (r.status_code == 200):
-                print('api.request SUCCESS')
+                if VERBOSE:
+                    print('api.request SUCCESS')
             else:
-                print('api.request FAILURE')
+                if VERBOSE:
+                    print('api.request FAILURE')
         else:
-            print(w_block_time == obt)
-            print('w_block_time='+w_block_time)
-            print('tweetBlockTime() FAILURE')
+            # print("VERBOSE=" + VERBOSE)
+            if VERBOSE:
+                print(w_block_time == obt)
+                print('w_block_time='+w_block_time)
+                print('tweetBlockTime() FAILURE')
 
 
 def getMempoolAPI(url, DATA):
-    print(url)
+    if VERBOSE:
+        print(url)
     with open(DATA, 'wb') as f:
         r = requests.get(url, stream=True)
         f.writelines(r.iter_content(1024))
         response = getData(DATA)
-        if DEBUG:
+        if VERBOSE:
             print(getData(DATA))
             print(response)
 
@@ -162,14 +176,16 @@ def searchBitcoin():
     global r
     r = api.request('search/tweets', {'q': 'bitcoin'})
     for item in r:
-        # print(item)
-
+        if VERBOSE:
+            print("")
+            #print(item)
         if DEBUG:
             try:
-                print(item)
-                # print(dir(item))
-                # print(str(item))
-                print("                                    ")
+                if VERBOSE:
+                    # print(item)
+                    # print(dir(item))
+                    # print(str(item))
+                    print("                                    ")
             except UnicodeDecodeError:
                 item = print(decode(item))
             except BaseException as error:
@@ -182,7 +198,9 @@ def searchBitcoin():
         if DEBUG:
             # prints byte like objects
             try:
-                print(data)
+                # print("VERBOSE=" + str(VERBOSE))
+                if VERBOSE:
+                    print(data)
             except UnicodeDecodeError:
                 data = decode(data)
             except BaseException as error:
@@ -201,7 +219,8 @@ def searchTwitter(term):
         if DEBUG:
             try:
                 # convert bytes (python 3) or unicode (python 2) to str
-                print(type(data))
+                if VERBOSE:
+                    print(type(data))
                 if str(type(data)) == "<class 'bytes'>":
                     # only possible in Python 3
                     try:
@@ -211,13 +230,16 @@ def searchTwitter(term):
                         # data = str(data)[2:-1]
                     except BaseException as error:
                         print('searchTwitter(): {}'.format(error))
-                    print(data)
+                    if VERBOSE:
+                        print(data)
                 elif str(type(data)) == "<type 'unicode'>":
                     # only possible in Python 2
                     data = str(data)
-                    print(data)
+                    if VERBOSE:
+                        print(data)
                 else:
-                    print(decode(data))
+                    if VERBOSE:
+                        print(decode(data))
 
             except UnicodeDecodeError:
                 data = decode(data)
@@ -237,13 +259,14 @@ def HEX_MESSAGE_DIGEST(recipient, message):
     n.update(bytes(recipient, 'utf-8'))
     n.update(bytes(message, 'utf-8'))
     n.update(bytes(btc_unix_time, 'utf-8'))
-    # print(n.digest())
+    if VERBOSE:
+        print(n.digest())
     # b'\x03\x1e\xdd}Ae\x15\x93\xc5\xfe\\\x00o\xa5u+7\xfd\xdf\xf7\xbcN\x84:\xa6\xaf\x0c\x95\x0fK\x94\x06'
-    # print(n.digest_size)
+        print(n.digest_size)
     # 32
-    # print(n.block_size)
+        print(n.block_size)
     # 64
-    # print(n.hexdigest())
+        print(n.hexdigest())
     return n.hexdigest()
 
 
@@ -253,12 +276,6 @@ def syndicateMessage(block_time):
     print("obt="+str(obt.decode()))
     if not DEBUG:
         if (block_time != obt):
-
-            # r = api.request('statuses/update',
-            #                 {'status':
-            #                  block_time+":"+getSeconds
-            #                  })
-
             if is_tool('nostril'):
                 message = \
                     "test twitter/nostr syndication"
@@ -268,6 +285,8 @@ def syndicateMessage(block_time):
                     "nostril --envelope --content '" \
                     + message + " " + digest + \
                     "' | websocat ws://localhost:3000/nostr"
+                if VERBOSE:
+                    print(cmd_str)
                 subprocess.run(cmd_str, shell=True)
                 r = api.request('statuses/update',
                                 {'status':
@@ -278,11 +297,17 @@ def syndicateMessage(block_time):
                                  + ':WHICHTOOL:' + str(which_tool('nostril'))
                                  + ':BTC:UNIX:' + BTC_UNIX_TIME()
                                  })
-                print(r.text)
-                print("" + message + "" + digest + "" + cmd_str + "")
+                if VERBOSE:
+                    print(r.text)
+                    print("" + message + "" + digest + "" + cmd_str + "")
             else:
                 message = "test twitter syndication"
                 digest = HEX_MESSAGE_DIGEST(GPGID, message)
+                if VERBOSE:
+                    print("GPGID=" + GPGID)
+                    print("message=" + message)
+                    print("digest=" + digest)
+                    print("BTC:UNIX=" + BTC_UNIX_TIME())
                 r = api.request('statuses/update',
                                 {'status':
                                  "GPGID:"+GPGID
@@ -300,7 +325,8 @@ def syndicateMessage(block_time):
             #     print('api.request FAILURE')
 
         else:
-            print('tweetBlockTime() FAILURE')
+            if VERBOSE:
+                print('tweetBlockTime() FAILURE')
 
 
 def is_tool(name):
@@ -378,7 +404,7 @@ def initialize(DEBUG):
         print('getMempoolAPI(): {}'.format(error))
 
     """declare some global variables"""
-    global NOSTRIL, WEBSOCAT, YARN, GPGID
+    global GPGID, NOSTRIL, WEBSOCAT, YARN
     GPGID = 'BB06757B'
     NOSTRIL = is_tool('nostril')
     WEBSOCAT = is_tool('websocat')
@@ -392,32 +418,32 @@ def initialize(DEBUG):
     except BaseException as error:
         print('BTC_UNIX_TIME(): {}'.format(error))
 
-    global message
+    global message, digest
     message = ""
-    global digest
     digest = ""
 
-    if DEBUG:
+    if VERBOSE:
         print("NOSTRIL="+str(NOSTRIL))
         print("which nostril"+which_tool('nostril'))
         print("WEBSOCAT="+str(WEBSOCAT))
         print("YARN="+str(YARN))
         print("BTC_UNIX_TIME()="+BTC_UNIX_TIME())
 
-        HEX_MESSAGE_DIGEST(GPGID, "test message")
-        HEX_MESSAGE_DIGEST(GPGID, str(NOSTRIL))
+    if DEBUG:
+        HEX_MESSAGE_DIGEST(GPGID, "")
 
         if (is_tool('nostril')):
             cmd_str = \
                         "nostril --envelope --content '" \
                         + message +\
-                        " " \
+                        ":" \
                         + digest +\
                         "' | websocat ws://localhost:3000/nostr"
-            print(cmd_str)
+            if VERBOSE:
+                print(cmd_str)
             subprocess.run(cmd_str, shell=True)
 
-    if DEBUG:
+    if VERBOSE:
         print(blockTime())
         print(getSeconds())
         print(getMillis())
@@ -425,18 +451,20 @@ def initialize(DEBUG):
         m = hashlib.sha256()
         m.update(b"Nobody inspects")
         m.update(b" the spammish repetition")
-        print(m.digest())
-# b'\x03\x1e\xdd}Ae\x15\x93\xc5\xfe\\\x00o\xa5u+7\xfd\xdf\xf7\xbcN\x84:\xa6\xaf\x0c\x95\x0fK\x94\x06'
-        print(m.digest_size)
-        print("WEEBLE_WOBBLE="+WEEBLE_WOBBLE())
-# 32
-        print(m.block_size)
-# 64
-        print(m.hexdigest())
+        if VERBOSE:
+            print(m.digest())
+            print(m.digest_size)
+            print("WEEBLE_WOBBLE="+WEEBLE_WOBBLE())
+            # 32
+            print(m.block_size)
+            # 64
+            print(m.hexdigest())
 
 
 global DEBUG
 DEBUG = 1
+global VERBOSE
+VERBOSE = 0
 try:
     initialize(DEBUG)
 except BaseException as error:
