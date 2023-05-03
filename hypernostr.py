@@ -88,6 +88,7 @@ def blockTime():
 
 def BTC_UNIX_TIME():
     global btc_unix_time
+    btc_unix_time = "0"
     btc_unix_time = str(blockTime())+":"+str(getSeconds())
     return btc_unix_time
 
@@ -141,15 +142,16 @@ def getData(filename):
     return data
 
 
-def tweetBlockTime(block_time):
-    if VERBOSE:
+def tweetBlockTime(w_block_time):
+    # blockTime()
+    if VERBOSE or DEBUG:
         print(str(w_block_time)+":"+str(getSeconds()))
         print("BTC_UNIX_TIME() = " + str(BTC_UNIX_TIME()))
-    print("WEEBLE() = " + str(WEEBLE()))
-    print("WOBBLE() = " + str(WOBBLE()))
-    print("WEEBLE:WOBBLE = " + str(WEEBLE()) + ":" + str(WOBBLE()))
-    print("WEEBLE:WOBBLE = " + str(WEEBLE_WOBBLE()))
-    print("DEBUG = " + str(DEBUG))
+        print("WEEBLE() = " + str(WEEBLE()))
+        print("WOBBLE() = " + str(WOBBLE()))
+        print("WEEBLE:WOBBLE=" + str(WEEBLE()) + ":" + str(WOBBLE()))
+        print("WEEBLE:WOBBLE=" + str(WEEBLE_WOBBLE()))
+        print("DEBUG=" + str(DEBUG))
     if not DEBUG:
         if (w_block_time != obt):
             r = api.request('statuses/update',
@@ -188,15 +190,15 @@ def searchBitcoin():
     r = api.request('search/tweets', {'q': 'bitcoin'})
     for item in r:
         if VERBOSE:
-            print("")
-            #print(item)
+            # print("")
+            print(item)
         if DEBUG:
             try:
                 if VERBOSE:
                     # print(item) # not what we want
                     # print(dir(item)) #  not what we want
                     print(str(item))
-                    print("                                    ")
+                    # print("                                    ")
             except UnicodeDecodeError:
                 item = print(decode(item))
             except BaseException as error:
@@ -211,7 +213,8 @@ def searchBitcoin():
             try:
                 # print("VERBOSE=" + str(VERBOSE))
                 if VERBOSE:
-                    print(data)
+                    print()
+                    # print(data)
             except UnicodeDecodeError:
                 data = decode(data)
             except BaseException as error:
@@ -231,7 +234,8 @@ def searchTwitter(term):
             try:
                 # convert bytes (python 3) or unicode (python 2) to str
                 if VERBOSE:
-                    print(type(data))
+                    print()
+                    # print(type(data))
                 if str(type(data)) == "<class 'bytes'>":
                     # only possible in Python 3
                     try:
@@ -242,12 +246,14 @@ def searchTwitter(term):
                     except BaseException as error:
                         print('searchTwitter(): {}'.format(error))
                     if VERBOSE:
-                        print(data)
+                        print()
+                        # print(data)
                 elif str(type(data)) == "<type 'unicode'>":
                     # only possible in Python 2
                     data = str(data)
                     if VERBOSE:
-                        print(data)
+                        print()
+                        # print(data)
                 else:
                     if VERBOSE:
                         print(decode(data))
@@ -269,7 +275,7 @@ def HEX_MESSAGE_DIGEST(recipient, message):
     n = hashlib.sha256()
     if VERBOSE:
         print(n.digest())
-    print("n.digest()=" + str(n.digest()))
+        print("n.digest()=" + str(n.digest()))
     n.update(bytes(recipient, 'utf-8'))
     n.update(bytes(message, 'utf-8'))
     n.update(bytes(btc_unix_time, 'utf-8'))
@@ -284,10 +290,11 @@ def HEX_MESSAGE_DIGEST(recipient, message):
 
 
 def syndicateMessage(block_time):
-    print(not DEBUG)
-    print("block_time="+str(block_time))
-    print("obt="+str(obt.decode()))
-    print("WEEBLE:WOBBLE = " + str(WEEBLE_WOBBLE()))
+    if VERBOSE:
+        print(not DEBUG)
+        print("block_time="+str(block_time))
+        print("obt="+str(obt.decode()))
+        print("WEEBLE:WOBBLE=" + str(WEEBLE_WOBBLE()))
     if not DEBUG:
         if (block_time != obt):
             if is_tool('nostril'):
@@ -487,8 +494,10 @@ def initialize(DEBUG):
 
 global DEBUG
 DEBUG = 1
+print("DEBUG="+str(DEBUG))
 global VERBOSE
 VERBOSE = 1
+print("VERBOSE="+str(VERBOSE))
 try:
     initialize(DEBUG)
 except BaseException as error:
