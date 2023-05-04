@@ -9,8 +9,9 @@
     "hyper-nostr-db-explorer": "db_explore.js"
   },
   "scripts": {
-    "test": "tape tests/**/*.js",
-    "standard": "standard"
+    "test": "pnpm lint && tape tests/**/*.js",
+    "lint": "standard --fix",
+    "start": "pnpm lint && node ."
   },
   "dependencies": {
     "@fastify/websocket": "^8.0.0",
