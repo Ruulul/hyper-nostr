@@ -17,18 +17,12 @@ const validateHandlers = {
   until: (event, filter) => event.created_at < filter
 }
 export default async function createDB (bee) {
-  console.log('createDB')
   const db = new DB(bee)
 
-  console.log('create collection')
   const events = db.collection('events')
-  console.log('create indexes')
-  await events.createIndex('kind, created_at, pubkey, id'.split(', ')).catch(e => {
-    console.error(e)
-    throw e
-  })
 
-  console.log('createDB end')
+  await events.createIndex('kind, created_at, pubkey, id'.split(', '))
+
   return { handleEvent, queryEvents, validateEvent }
 
   function handleEvent (event) {
