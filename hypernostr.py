@@ -277,9 +277,9 @@ def HEX_MESSAGE_DIGEST(recipient, message):
     if VERBOSE:
         print(n.digest())
         print("n.digest()=" + str(n.digest()))
-    n.update(bytes(recipient, 'utf-8'))
+    #n.update(bytes(recipient, 'utf-8'))
     n.update(bytes(message, 'utf-8'))
-    n.update(bytes(btc_unix_time, 'utf-8'))
+    #n.update(bytes(btc_unix_time, 'utf-8'))
     if VERBOSE:
         print(n.digest())
         print(n.digest_size)
@@ -300,25 +300,24 @@ def syndicateMessage(block_time):
         if (block_time != obt):
             if is_tool('nostril'):
                 message = \
-                    "test twitter/nostr syndication"
+                    ""
                 digest = \
                     HEX_MESSAGE_DIGEST(GPGID, message)
                 cmd_str = \
                     "nostril --envelope --content '" \
-                    + str(WEEBLE_WOBBLE()) + " " + \
-                    + message + ":" + digest + \
-                    "' | websocat ws://localhost:3000/nostr"
+                    + str(WEEBLE_WOBBLE()) \
+                    + " " \
+                    + message + ":" + digest \
+                    + "' | websocat ws://localhost:3000/nostr"
                 if VERBOSE:
                     print(cmd_str)
                 print("cmd_str=" + cmd_str)
                 subprocess.run(cmd_str, shell=True)
                 r = api.request('statuses/update',
                                 {'status':
-                                 "GPGID:" + GPGID
+                                'GPGID:' + GPGID
                                  + ':MESSAGE:' + message
                                  + ':DIGEST:' + digest
-                                 # + ':TOOL:' + str(is_tool('nostril'))
-                                 # + ':WHICHTOOL:' + str(which_tool('nostril'))
                                  + ':WEEBLE:WOBBLE:' + WEEBLE_WOBBLE()
                                  + ':BTC:UNIX:' + BTC_UNIX_TIME()
                                  })
