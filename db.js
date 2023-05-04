@@ -21,7 +21,13 @@ export default async function createDB (bee) {
 
   const events = db.collection('events')
 
-  await events.createIndex('kind, created_at, pubkey, id'.split(', '))
+  await events.createIndex(['kind'])
+  await events.createIndex(['pubkey'])
+  await events.createIndex(['created_at'])
+  await events.createIndex(['pubkey', 'kind'])
+  await events.createIndex(['pubkey', 'created_at'])
+  await events.createIndex(['kind', 'pubkey'])
+  await events.createIndex(['kind', 'created_at'])
 
   return { handleEvent, queryEvents, validateEvent }
 
@@ -39,7 +45,7 @@ export default async function createDB (bee) {
         )
       )).flat().filter(
         (e, i, a) => i === a.findIndex(s => s.id === e.id)
-      ).slice(0, limit)
+      ).slice(0, limit > 0 ? limit : Infinity)
     )
   }
 }

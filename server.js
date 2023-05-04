@@ -3,6 +3,16 @@
 import fastify from 'fastify'
 import fastifyWebsocket from '@fastify/websocket'
 import createSwarm from './swarm.js'
+import * as SDK from 'hyper-sdk'
+import goodbye from 'graceful-goodbye'
+
+const sdk = await SDK.create({
+  storage: '.hyper-nostr-relay',
+  autoJoin: true
+})
+sdk.prefix = 'hyper-nostr-'
+console.log('your key is', sdk.publicKey.toString('hex'))
+goodbye(_ => sdk.close())
 
 const fi = fastify()
 const port = process.argv[2] || 3000
@@ -16,7 +26,7 @@ fi.register(async function (fastify) {
     console.log('ws connection started')
     if (!topic) return
     if (!topics.has(topic)) {
-      topics.set(topic, await createSwarm(topic))
+      topics.set(topic, await createSwarm(sdk, topic))
     }
     const { sendEvent, subs, queryEvents } = topics.get(topic)
     const { socket } = con
