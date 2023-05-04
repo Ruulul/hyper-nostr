@@ -1,4 +1,4 @@
-$(which python3) ./hypernostr.py
+$(which python3) ./hypernostr.py > WEEBLE:WOBBLE
 
 TIME=$(date +%s)
 export TIME
