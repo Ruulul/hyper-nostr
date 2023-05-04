@@ -16,7 +16,6 @@ export default async function createSwarm (sdk, _topic) {
   const events = discovery.registerExtension(topic, {
     encoding: 'json',
     onmessage: event => {
-      handleEvent(event)
       subs.forEach(({ filters, socket }, key) => {
         if (validateEvent(event, filters)) socket.send(['EVENT', key, event])
       })
@@ -42,11 +41,15 @@ export default async function createSwarm (sdk, _topic) {
   broadcastDBs()
 
   console.log(`swarm ${topic} created with hyper!`)
-  return { subs, sendEvent, queryEvents }
+  return { subs, sendEvent, queryEvents, update }
+
+  async function update () {
+    await bee.bee.update()
+  }
 
   function sendEvent (event) {
-    handleEvent(event)
     events.broadcast(event)
+    return handleEvent(event)
   }
 
   function broadcastDBs () {

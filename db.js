@@ -35,6 +35,7 @@ export default async function createDB (bee) {
     return events.insert(event)
   }
   async function queryEvents (filters) {
+    if (!filters || filters.length === 0) return await events.find()
     const queries = buildQueries(filters)
 
     const limit = Math.max(filters.map(filter => filter.limit || 0))
