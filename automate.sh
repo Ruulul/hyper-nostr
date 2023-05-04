@@ -17,8 +17,9 @@ echo "$KEY"
 echo "$KEY" >> keys.txt
 #nostril --sec $KEY -t nostr -t swarm --envelope --content "#nostr #swarm" | websocat wss://relay.damus.io
 #nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #nostr #swarm 🤙" | websocat wss://relay.damus.io
-#nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #nostr #swarm 🤙" | websocat ws://localhost:3000/nostr
+nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #nostr #swarm 🤙" | websocat ws://localhost:3000/nostr
 
-nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: $(git diff -- DIFFICULTY)" | websocat ws://localhost:3000/nostr
+#nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: $(git diff -- DIFFICULTY)" | websocat ws://localhost:3000/nostr
+nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #gitstr #test $(git diff)" | websocat ws://localhost:3000/nostr
 cat ./topics/nostr.json
 #echo $(( $KEY_0 ^ $KEY ))
