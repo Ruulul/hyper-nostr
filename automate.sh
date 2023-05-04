@@ -20,6 +20,7 @@ echo "$KEY" >> keys.txt
 nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #nostr #swarm 🤙" | websocat ws://localhost:3000/nostr
 
 #nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: $(git diff -- DIFFICULTY)" | websocat ws://localhost:3000/nostr
-nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #gitstr #test $(git diff)" | websocat ws://localhost:3000/nostr
-cat ./topics/nostr.json
+#nostril --sec $KEY -t "$TIME" -t hyper-swarm -t nostr -t swarm --envelope --content "$TIME: #gitstr #test $(git diff)" | websocat ws://localhost:3000/nostr
+nostril --sec $KEY -t "$TIME" -t "$(echo "$(echo uname -srm)")" -t gitstr -t nostr -t swarm --envelope --content "$TIME: #gitstr #test $(git diff)" | websocat wss://relay.damus.io
+#cat ./topics/nostr.json
 #echo $(( $KEY_0 ^ $KEY ))
