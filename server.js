@@ -6,6 +6,9 @@ import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from 'graceful-goodbye'
 
+const port = process.argv[2] || 3000
+const startingTopics = process.argv.slice(3)
+
 const sdk = await SDK.create({
   storage: '.hyper-nostr-relay',
   autoJoin: true
@@ -15,9 +18,15 @@ console.log('your key is', sdk.publicKey.toString('hex'))
 goodbye(_ => sdk.close())
 
 const fi = fastify()
-const port = process.argv[2] || 3000
 
 const topics = new Map()
+await Promise.all(
+  startingTopics
+    .filter(Boolean)
+    .map(async topic =>
+      topics.set(topic, await createSwarm(sdk, topic))
+    )
+)
 
 fi.register(fastifyWebsocket)
 fi.register(async function (fastify) {
