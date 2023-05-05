@@ -26,6 +26,7 @@ export default async function createDB (bee) {
   await events.createIndex(['kind'])
   await events.createIndex(['pubkey'])
   await events.createIndex(['created_at'])
+  await events.createIndex(['id'])
   await events.createIndex(['pubkey', 'kind'])
   await events.createIndex(['pubkey', 'created_at'])
   await events.createIndex(['kind', 'pubkey'])

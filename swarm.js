@@ -35,9 +35,13 @@ export default async function createSwarm (sdk, _topic) {
       if (sawNew) broadcastDBs()
     }
   })
+  let count = 0
   discovery.on('peer-add', _ => {
-    console.log(`got a new peer on ${_topic}!`)
+    console.log(`${++count} peers on ${_topic}!`)
     broadcastDBs()
+  })
+  discovery.on('peer-remove', _ => {
+    console.log(`${--count} peers on ${_topic}!`)
   })
   broadcastDBs()
 
