@@ -57,7 +57,7 @@ export default async function createDB (bee) {
 function validateEvent (event, filters) {
   return filters
     .map(filter =>
-      filter
+      Object.entries(filter)
         .filter(([key]) => key.startsWith('#') || (key in filtersHandlers && key !== 'limit'))
         .map(([key, value]) =>
           key.startsWith('#')
