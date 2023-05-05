@@ -30,9 +30,9 @@ await Promise.all(
 fi.register(fastifyWebsocket)
 fi.register(async function (fastify) {
   fastify.get('/:topic', { websocket: true }, async (con, req) => {
-    const { topic } = req.params
+    let { topic } = req.params
+    if (!topic) topic = 'nostr'
     console.log('ws connection started')
-    if (!topic) return
     if (!topics.has(topic)) {
       topics.set(topic, await createSwarm(sdk, topic))
     }
