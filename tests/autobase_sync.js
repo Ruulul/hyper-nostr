@@ -11,7 +11,6 @@ async function createPeer () {
     storage: false,
     autoJoin: true
   })
-  sdk.prefix = 'hyper-nostr-'
   goodbye(_ => sdk.close())
   return await createSwarm(sdk, topic)
 }

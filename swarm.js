@@ -2,8 +2,10 @@ import createDB from './db.js'
 import createBee from './bee.js'
 import { createHash } from 'crypto'
 
+const prefix = 'hyper-nostr-'
+
 export default async function createSwarm (sdk, _topic) {
-  const topic = sdk.prefix + _topic
+  const topic = prefix + _topic
   const subs = new Map()
 
   const bee = await createBee(sdk, topic)

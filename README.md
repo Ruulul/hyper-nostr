@@ -1,8 +1,57 @@
+# Hyper-Nostr Relay
+Hyper-Nostr is a distributed nostr relay that syncs your relay storage and real time events through the [Hyperswarm](https://github.com/holepunchto/hyperswarm), linearizes the databases with [Autobase](https://github.com/holepunchto/autobase), and uses a [Hyperbeedee](https://github.com/Telios-org/hyperdeebee) database (loosely based on MongoDB).
+
+The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](https://github.com/rangermauve/hyper-sdk).
+# NIPs implemented
+Currently only NIP-01 (mandatory nostr implementation), NIP-20 (command results) and NIP-45 (event counts)
 # Usage
 1. Install: `npm -g hyper-nostr`
-2. Run: `hyper-nostr [port]` (default 3000)
+2. Run: `hyper-nostr [port [...starting topics]]` (default 3000)
 3. Add your relay as `ws://localhost:[port]/[topic]` in your Nostr client (I am using `nostr` as a topic to make some kind of generic swarm)
 4. Setup done!
+# Code API
+```js
+import * as SDK from 'hyper-sdk'
+import createSwarm from 'hyper-nostr'
+import goodbye from 'graceful-goodbye'
 
-# NIPs implemented
-Currently only NIP-01, NIP-20 and NIP-45
+const yourStorageFolder = '.hyper-nostr-relay' // set to false to not persist
+cosnt theTopic = 'nostr'
+
+const sdk = SDK.create({
+    storage: yourStorageFolder
+})
+goodbye(_ => sdk.close())
+
+const { 
+    subs, // a Map<subscriptionId: string, { filters: Filter[], socket: WebSocket }> object
+    sendEvent, // (event: Event) => document: Object | Error; to send an Nostr Event to the peers and the local database
+    queryEvents, // (filters: Filter[]) => Promise<Event[]>; to query the database for the events that match the list of filters 
+    update, // () => Promise<void>; to await the database to update, syncing with the connected peers
+} = await createSwarm(sdk, theTopic)
+```
+# Server API
+The client can send the following events through the websocket:
+- REQ: Request and subscription event
+    - Format: `["REQ", <subscription id>, <filters JSON>...]`
+    - The server then adds the socket and the filters to the `subs` map
+    - The server will send all the events that are on the database that matches the query, followed by a `["EOSE", <subscription id>]` event, signalling that all events from now on will be on real time
+- EVENT: Send an event to the relay
+    - Format: `["EVENT", <event JSON>]`
+    - The server will use `sendEvent` to broadcast the event, and received events through this broadcast are internally validated and sent through the `subs` Map
+    - The server confirms that the message was sent with an `["OK", <event id>, true, ""]` (NIP-20)
+- CLOSE: Cancel a subscription
+    - Format: `["CLOSE", <subscription id>]`
+    - Cancels a subscription, removing it from the `subs` map
+- COUNT: Counts the number of events that match a query (NIP-45)
+    - Format: `["COUNT", <subscription id>, <filters JSON>...]`
+    - Query and count events that match the filters sent in the same event
+The server sends the following events:
+- EOSE and OK specified above;
+- EVENT: Sending an event that matches the filters of a subscription
+    - Format: `["EVENT", <subscription id>, <event JSON>]`
+- NOTICE: Reporting errors
+    - Format: `["NOTICE", <message>]`
+    - The only Notice this server implements is `"Unrecognized event"`, for when there is no match for the event kind sent.
+# License
+MIT

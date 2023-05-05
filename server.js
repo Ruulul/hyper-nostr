@@ -13,7 +13,6 @@ const sdk = await SDK.create({
   storage: '.hyper-nostr-relay',
   autoJoin: true
 })
-sdk.prefix = 'hyper-nostr-'
 console.log('your key is', sdk.publicKey.toString('hex'))
 goodbye(_ => sdk.close())
 
