@@ -65,7 +65,7 @@ export default async function createSwarm (sdk, _topic) {
 
   async function handleNewDB (url) {
     knownDBs.add(url)
-    await bee.addInput(await sdk.get(url))
+    return bee.autobase.addInput(await sdk.get(url))
   }
 }
 
