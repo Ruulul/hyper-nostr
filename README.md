@@ -1,4 +1,7 @@
 # Hyper-Nostr Relay
+## Support me!
+- Sats: v_142857@getalby.com
+- Ko-fi: https://ko-fi.com/v142857
 ## Usage
 The goal of this tool is to behave as a public relay; think of the chosen topic as a public relay, where you can send and receive notes from your peers!
 1. Install: `npm -g hyper-nostr`
