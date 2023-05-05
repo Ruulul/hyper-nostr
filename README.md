@@ -52,6 +52,7 @@ The client can send the following events through the websocket:
 - COUNT: Counts the number of events that match a query (NIP-45)
     - Format: `["COUNT", <subscription id>, <filters JSON>...]`
     - Query and count events that match the filters sent in the same event
+
 The server sends the following events:
 - EOSE and OK specified above;
 - EVENT: Sending an event that matches the filters of a subscription
