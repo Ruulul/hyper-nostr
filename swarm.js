@@ -25,13 +25,12 @@ export default async function createSwarm (sdk, _topic) {
   })
   const DBBroadcast = discovery.registerExtension(topic + '-sync', {
     encoding: 'json',
-    onmessage: message => {
+    onmessage: async (message) => {
       let sawNew = false
       for (const url of message) {
         if (knownDBs.has(url)) continue
         sawNew = true
-        knownDBs.add(url)
-        handleNewDB(url)
+        await handleNewDB(url)
       }
       if (sawNew) broadcastDBs()
     }
@@ -59,6 +58,7 @@ export default async function createSwarm (sdk, _topic) {
   }
 
   async function handleNewDB (url) {
+    knownDBs.add(url)
     await bee.addInput(await sdk.get(url))
   }
 }
