@@ -1,15 +1,18 @@
 # Hyper-Nostr Relay
-Hyper-Nostr is a distributed nostr relay that syncs your relay storage and real time events through the [Hyperswarm](https://github.com/holepunchto/hyperswarm), linearizes the databases with [Autobase](https://github.com/holepunchto/autobase), and uses a [Hyperbeedee](https://github.com/Telios-org/hyperdeebee) database (loosely based on MongoDB).
-
-The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](https://github.com/rangermauve/hyper-sdk).
-# NIPs implemented
-Currently only NIP-01 (mandatory nostr implementation), NIP-20 (command results) and NIP-45 (event counts)
-# Usage
+## Usage
+The goal of this tool is to behave as a public relay; think of the chosen topic as a public relay, where you can send and receive notes from your peers!
 1. Install: `npm -g hyper-nostr`
 2. Run: `hyper-nostr [port [...starting topics]]` (default 3000)
 3. Add your relay as `ws://localhost:[port]/[topic]` in your Nostr client (I am using `nostr` as a topic to make some kind of generic swarm)
 4. Setup done!
-# Code API
+## How it works
+Hyper-Nostr is a distributed nostr relay that syncs your relay storage and real time events through the [Hyperswarm](https://github.com/holepunchto/hyperswarm), linearizes the databases with [Autobase](https://github.com/holepunchto/autobase), and uses a [Hyperbeedee](https://github.com/Telios-org/hyperdeebee) database (loosely based on MongoDB).
+
+The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](https://github.com/rangermauve/hyper-sdk).
+## NIPs implemented
+Currently only NIP-01 (mandatory nostr implementation), NIP-20 (command results) and NIP-45 (event counts)
+
+## Code API
 ```js
 import * as SDK from 'hyper-sdk'
 import createSwarm from 'hyper-nostr'
@@ -30,7 +33,7 @@ const {
     update, // () => Promise<void>; to await the database to update, syncing with the connected peers
 } = await createSwarm(sdk, theTopic)
 ```
-# Server API
+## Server API
 The client can send the following events through the websocket:
 - REQ: Request and subscription event
     - Format: `["REQ", <subscription id>, <filters JSON>...]`
@@ -53,5 +56,5 @@ The server sends the following events:
 - NOTICE: Reporting errors
     - Format: `["NOTICE", <message>]`
     - The only Notice this server implements is `"Unrecognized event"`, for when there is no match for the event kind sent.
-# License
+## License
 MIT

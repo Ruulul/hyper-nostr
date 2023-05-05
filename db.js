@@ -1,5 +1,7 @@
 import { DB } from 'hyperdeebee'
 
+const defaultLimit = Infinity
+
 const filtersHandlers = {
   ids: filter => ['id', { $in: filter }],
   kinds: filter => ['kind', { $in: filter }],
@@ -35,19 +37,20 @@ export default async function createDB (bee) {
     return events.insert(event)
   }
   async function queryEvents (filters) {
-    if (!filters || filters.length === 0) return await events.find()
+    if (!filters ||
+      filters
+        .filter(filter => Object.keys(filter).length)
+        .length === 0) return await events.find({})
     const queries = buildQueries(filters)
 
     const limit = Math.max(filters.map(filter => filter.limit || 0))
-    return (
-      (await Promise.all(
-        queries.map(
-          async query => await events.find(query)
-        )
-      )).flat().filter(
-        (e, i, a) => i === a.findIndex(s => s.id === e.id)
-      ).slice(0, limit > 0 ? limit : Infinity)
-    )
+    const queryResult = new Map()
+    for (const query of queries) {
+      for await (const doc of events.find(query).sort('created_at', -1)) {
+        queryResult.set(doc.id, doc)
+      }
+    }
+    return Array.from(queryResult.values()).slice(0, limit > 0 ? limit : defaultLimit)
   }
 }
 

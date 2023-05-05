@@ -1,6 +1,6 @@
 {
   "name": "hyper-nostr",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "a distributed local-first nostr relay that syncs on background based on topic",
   "main": "swarm.js",
   "type": "module",

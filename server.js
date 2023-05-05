@@ -45,21 +45,23 @@ fi.register(async function (fastify) {
       switch (type) {
         case 'EVENT':
           sendEvent(value)
-          socket.send(['OK', value.id, true, ''])
+          socket.send(`['OK', ${value.id}, true, '']`)
           break
         case 'REQ':
           subs.set(value, { filters: rest, socket });
-          (await queryEvents(rest)).map(event => ['EVENT', value, event]).forEach(event => socket.send(event))
-          socket.send(['EOSE', value])
+          (await queryEvents(rest))
+            .map(event => `['EVENT', ${value}, ${JSON.stringify((delete event._id, event))}]`)
+            .forEach(event => socket.send(event))
+          socket.send(`['EOSE', ${value}]`)
           break
         case 'CLOSE':
           subs.delete(value)
           break
         case 'COUNT':
-          subs.get(value).socket.send(['COUNT', value, { count: queryEvents(rest).length }])
+          subs.get(value).socket.send(`['COUNT', ${value}, ${JSON.stringify({ count: queryEvents(rest).length })}]`)
           break
         default:
-          socket.send(['NOTICE', 'Unrecognized event'])
+          socket.send("['NOTICE', 'Unrecognized event']")
           console.log('Unrecognized event')
       }
     })

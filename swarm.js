@@ -19,7 +19,7 @@ export default async function createSwarm (sdk, _topic) {
     encoding: 'json',
     onmessage: event => {
       subs.forEach(({ filters, socket }, key) => {
-        if (validateEvent(event, filters)) socket.send(['EVENT', key, event])
+        if (validateEvent(event, filters)) socket.send(`['EVENT', ${key}, ${JSON.stringify((delete event._id, event))}]`)
       })
     }
   })
