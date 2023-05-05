@@ -1,6 +1,6 @@
 # Hyper-Nostr Relay
 ## Support me!
-- Sats: v_142857@getalby.com
+- Sats: https://getalby.com/p/v_142857
 - Ko-fi: https://ko-fi.com/v142857
 ## Usage
 The goal of this tool is to behave as a public relay; think of the chosen topic as a public relay, where you can send and receive notes from your peers!
@@ -59,5 +59,8 @@ The server sends the following events:
 - NOTICE: Reporting errors
     - Format: `["NOTICE", <message>]`
     - The only Notice this server implements is `"Unrecognized event"`, for when there is no match for the event kind sent.
+## Troubleshooting
+- `Batch is out-of-date. Did you commit another batch in parallel?`
+    - This is corrupted data. I am still trying to narrow the source of that. Quick fix: `rm .hyper-nostr-relay -R` (on the same place you ran `hyper-nostr`)
 ## License
 MIT
