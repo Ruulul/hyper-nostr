@@ -44,7 +44,7 @@ fi.register(async function (fastify) {
       const [type, value, ...rest] = JSON.parse(message)
       switch (type) {
         case 'EVENT':
-          sendEvent(value)
+          sendEvent(value, socket)
           socket.send(`["OK", ${value.id}, true, ""]`)
           break
         case 'REQ':

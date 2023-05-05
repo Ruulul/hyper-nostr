@@ -17,11 +17,7 @@ export default async function createSwarm (sdk, _topic) {
   const discovery = await sdk.get(createTopicBuffer(topic))
   const events = discovery.registerExtension(topic, {
     encoding: 'json',
-    onmessage: event => {
-      subs.forEach(({ filters, socket }, key) => {
-        if (validateEvent(event, filters)) socket.send(`["EVENT", "${key}", ${JSON.stringify((delete event._id, event))}]`)
-      })
-    }
+    onmessage: streamEvent
   })
   const DBBroadcast = discovery.registerExtension(topic + '-sync', {
     encoding: 'json',
@@ -52,8 +48,15 @@ export default async function createSwarm (sdk, _topic) {
     await bee.bee.update()
   }
 
-  function sendEvent (event) {
+  function streamEvent (event, sender) {
+    subs.forEach(({ filters, socket }, key) => {
+      if (sender !== socket && validateEvent(event, filters)) socket.send(`["EVENT", "${key}", ${JSON.stringify((delete event._id, event))}]`)
+    })
+  }
+
+  function sendEvent (event, sender) {
     events.broadcast(event)
+    streamEvent(event, sender)
     return handleEvent(event)
   }
 
