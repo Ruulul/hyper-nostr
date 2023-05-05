@@ -32,16 +32,22 @@ export default async function createSwarm (sdk, _topic) {
     }
   })
   discovery.on('peer-add', _ => {
-    console.log(`${discovery.peers.length} peers on ${_topic}!`)
+    logPeers()
     broadcastDBs()
   })
   discovery.on('peer-remove', _ => {
+    logPeers()
     console.log(`${discovery.peers.length} peers on ${_topic}`)
   })
+  logPeers()
   broadcastDBs()
 
   console.log(`swarm ${topic} created with hyper!`)
   return { subs, sendEvent, queryEvents, update }
+
+  function logPeers () {
+    console.log(`${discovery.peers.length} peers on ${_topic}!`)
+  }
 
   async function update () {
     await bee.bee.update()
