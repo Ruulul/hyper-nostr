@@ -17,7 +17,7 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 - [] NIP-02 (contact lists)
 - [] NIP-04 (direct messages)
 - [] NIP-09 (event deletion)
-- [] NIP-11 (relay information)
+- [x] NIP-11 (relay information)
 - [x] NIP-12 (generic tag queries)
 - [x] NIP-16 (event treatment)
 - [x] NIP-20 (command results)
