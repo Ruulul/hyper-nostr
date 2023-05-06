@@ -41,7 +41,7 @@ goodbye(_ => sdk.close())
 
 const { 
     subs, // a Map<subscriptionId: string, { filters: Filter[], socket: WebSocket }> object
-    sendEvent, // (event: Event, socket?: WebSocket) => document: Object | Error; to send an Nostr Event to the peers and the local database. Optionally pass in the socket of the sender to filter them out in the broadcast
+    sendEvent, // (event: Event, kind: 'regular' | 'replaceable' | 'ephemeral', socket?: WebSocket) => document: Object | Error; to send an Nostr Event to the peers and the local database. Optionally pass in the socket of the sender to filter them out in the broadcast
     queryEvents, // (filters: Filter[]) => Promise<Event[]>; to query the database for the events that match the list of filters 
     update, // () => Promise<void>; to await the database to update, syncing with the connected peers
 } = await createSwarm(sdk, theTopic)
