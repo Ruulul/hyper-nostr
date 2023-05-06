@@ -14,16 +14,16 @@ Hyper-Nostr is a distributed nostr relay that syncs your relay storage and real 
 The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](https://github.com/rangermauve/hyper-sdk).
 ## NIPs implemented
 - [x] NIP-01 (mandatory nostr implementation)
-- [] NIP-02 (contact lists)
+- [x] NIP-02 (contact lists)
 - [] NIP-04 (direct messages)
 - [] NIP-09 (event deletion)
 - [x] NIP-11 (relay information)
 - [x] NIP-12 (generic tag queries)
 - [x] NIP-16 (event treatment)
 - [x] NIP-20 (command results)
+- [] NIP-33 (parametrized replaceable events)
 - [x] NIP-45 (event counts)
 - [] NIP-50 (search)
-- [] NIP-103 (direct message envelopes)
 
 ## Code API
 ```js

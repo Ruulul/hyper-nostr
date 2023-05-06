@@ -29,6 +29,7 @@ await Promise.all(
 
 fi.register(fastifyWebsocket)
 fi.register(async function (fastify) {
+  const replaceableKinds = Object.freeze([0, 3])
   fastify.route({
     method: 'GET',
     url: '/:topic',
@@ -39,7 +40,7 @@ fi.register(async function (fastify) {
           name: 'nostr-relay-' + (topic || 'nostr'),
           description: 'a decentralized nostr relay, powered by Hypercore',
           pubkey: 'd5b4107402ea8a23719f8c7fc57e7eaba6bc54e7c2da62b39300207c156978f1',
-          'supported-nips': [1, 11, 12, 16, 20, 45],
+          'supported-nips': [1, 2, 11, 12, 16, 20, 45],
           software: 'https://github.com/Ruulul/hyper-nostr'
         })
       } else reply.send()
@@ -60,9 +61,9 @@ fi.register(async function (fastify) {
         switch (type) {
           case 'EVENT': {
             const type =
-              value.kind > 0 && value.kind < 10000
+              !replaceableKinds.includes(value.kind) && value.kind < 10000
                 ? 'regular'
-                : value.kind < 20000 || value.kind === 0
+                : value.kind < 20000 || replaceableKinds.includes(value.kind)
                   ? 'replaceable'
                   : value.kind < 30000
                     ? 'ephemeral'
