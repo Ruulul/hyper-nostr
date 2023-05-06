@@ -34,8 +34,14 @@ export default async function createDB (bee) {
 
   return { handleEvent, queryEvents, validateEvent }
 
-  function handleEvent (event) {
-    return events.insert(event)
+  function handleEvent (event, type) {
+    if (type === 'regular') events.insert(event)
+    else if (type === 'replaceable') {
+      events.update({
+        pubkey: event.pubkey,
+        kind: event.kind
+      }, event)
+    } else throw new Error('Unrecognized event kind: ' + type)
   }
   async function queryEvents (filters) {
     if (!filters ||

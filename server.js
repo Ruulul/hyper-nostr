@@ -43,10 +43,23 @@ fi.register(async function (fastify) {
     socket.on('message', async message => {
       const [type, value, ...rest] = JSON.parse(message)
       switch (type) {
-        case 'EVENT':
-          sendEvent(value, socket)
+        case 'EVENT': {
+          const type =
+            value.kind > 0 && value.kind < 10000
+              ? 'regular'
+              : value.kind < 20000 || value.kind === 0
+                ? 'replaceable'
+                : value.kind < 30000
+                  ? 'ephemeral'
+                  : undefined
+          if (!type) {
+            socket.send('["NOTICE", "Unrecognized event kind"]')
+            break
+          }
+          sendEvent(value, type, socket)
           socket.send(`["OK", ${value.id}, true, ""]`)
           break
+        }
         case 'REQ':
           subs.set(value, { filters: rest, socket });
           (await queryEvents(rest))

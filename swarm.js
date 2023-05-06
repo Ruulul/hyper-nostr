@@ -3,6 +3,7 @@ import createBee from './bee.js'
 import { createHash } from 'crypto'
 
 const prefix = 'hyper-nostr-'
+const persistentKinds = Object.freeze(['regular', 'replaceable'])
 
 export default async function createSwarm (sdk, _topic) {
   const topic = prefix + _topic
@@ -59,10 +60,10 @@ export default async function createSwarm (sdk, _topic) {
     })
   }
 
-  function sendEvent (event, sender) {
+  function sendEvent (event, type, sender) {
     events.broadcast(event)
     streamEvent(event, sender)
-    return handleEvent(event)
+    if (persistentKinds.includes(type)) return handleEvent(event, type)
   }
 
   function broadcastDBs () {
