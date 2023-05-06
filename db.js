@@ -40,7 +40,7 @@ export default async function createDB (bee) {
       events.update({
         pubkey: event.pubkey,
         kind: event.kind
-      }, event)
+      }, event, { upsert: true })
     } else if (type === 'delete') {
       console.log('sorry, delete events arent supported yet')
     } else throw new Error('Unrecognized event kind: ' + type)
