@@ -29,7 +29,6 @@ await Promise.all(
 
 fi.register(fastifyWebsocket)
 fi.register(async function (fastify) {
-  const replaceableKinds = Object.freeze([0, 3])
   fastify.route({
     method: 'GET',
     url: '/:topic',
@@ -60,14 +59,7 @@ fi.register(async function (fastify) {
         const [type, value, ...rest] = JSON.parse(message)
         switch (type) {
           case 'EVENT': {
-            const type =
-              !replaceableKinds.includes(value.kind) && value.kind < 10000
-                ? 'regular'
-                : value.kind < 20000 || replaceableKinds.includes(value.kind)
-                  ? 'replaceable'
-                  : value.kind < 30000
-                    ? 'ephemeral'
-                    : undefined
+            const type = getEventType(value.kind)
             if (!type) {
               socket.send('["NOTICE", "Unrecognized event kind"]')
               break
@@ -105,3 +97,12 @@ fi.listen({ port }, err => {
   if (err) throw err
   console.log(`listening on ${port}`)
 })
+
+const replaceableKinds = Object.freeze([0, 3])
+function getEventType (kind) {
+  if (kind === 5) return 'delete'
+  if (replaceableKinds.includes(kind)) return 'replaceable'
+  if (kind < 10000) return 'regular'
+  if (kind < 20000) return 'replaceable'
+  if (kind < 30000) return 'ephemeral'
+}

@@ -41,6 +41,8 @@ export default async function createDB (bee) {
         pubkey: event.pubkey,
         kind: event.kind
       }, event)
+    } else if (type === 'delete') {
+      console.log('sorry, delete events arent supported yet')
     } else throw new Error('Unrecognized event kind: ' + type)
   }
   async function queryEvents (filters) {
