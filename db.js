@@ -66,7 +66,7 @@ export default async function createDB (bee) {
   }
 }
 
-function validateEvent (event, filters) {
+export function validateEvent (event, filters) {
   return filters
     .map(filter =>
       Object.entries(filter)
