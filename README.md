@@ -15,15 +15,15 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 ## NIPs implemented
 - [x] NIP-01 (mandatory nostr implementation)
 - [x] NIP-02 (contact lists)
-- [] NIP-04 (direct messages)
-- [] NIP-09 (event deletion)
+- [ ] NIP-04 (direct messages)
+- [ ] NIP-09 (event deletion)
 - [x] NIP-11 (relay information)
 - [x] NIP-12 (generic tag queries)
 - [x] NIP-16 (event treatment)
 - [x] NIP-20 (command results)
-- [] NIP-33 (parametrized replaceable events)
+- [ ] NIP-33 (parametrized replaceable events)
 - [x] NIP-45 (event counts)
-- [] NIP-50 (search)
+- [ ] NIP-50 (search)
 
 ## Code API
 ```js
