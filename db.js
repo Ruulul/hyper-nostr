@@ -1,4 +1,5 @@
 import { DB } from 'hyperdeebee'
+import { validateEvent as nostrValidate, verifySignature as nostrSignature } from 'nostr-tools'
 
 const defaultLimit = Infinity
 
@@ -35,6 +36,7 @@ export default async function createDB (bee) {
   return { handleEvent, queryEvents, validateEvent }
 
   function handleEvent (event, type) {
+    if (!(nostrValidate(event) && nostrSignature(event))) return
     if (type === 'regular') events.insert(event)
     else if (type === 'replaceable') {
       events.update({

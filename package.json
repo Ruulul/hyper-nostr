@@ -30,9 +30,16 @@
     "hyper-sdk": "^4.2.4",
     "hyperbee": "^2.8.0",
     "hyperdeebee": "github:Ruulul/hyperdeebee",
+    "nostr-tools": "^1.10.1",
     "tape": "^5.6.3"
   },
-  "keywords": ["local-first", "distributed", "p2p", "nostr", "hypercore"],
+  "keywords": [
+    "local-first",
+    "distributed",
+    "p2p",
+    "nostr",
+    "hypercore"
+  ],
   "author": "v142857",
   "license": "MIT",
   "devDependencies": {

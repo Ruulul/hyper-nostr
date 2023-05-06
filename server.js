@@ -5,6 +5,7 @@ import fastifyWebsocket from '@fastify/websocket'
 import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from 'graceful-goodbye'
+import { validateEvent, verifySignature } from 'nostr-tools'
 
 const port = process.argv[2] || 3000
 const startingTopics = process.argv.slice(3)
@@ -59,6 +60,9 @@ fi.register(async function (fastify) {
         const [type, value, ...rest] = JSON.parse(message)
         switch (type) {
           case 'EVENT': {
+            if (!(validateEvent(value) && verifySignature(value))) {
+              socket.send('["NOTICE", "Invalid event"]')
+            }
             const type = getEventType(value.kind)
             if (!type) {
               socket.send('["NOTICE", "Unrecognized event kind"]')

@@ -1,6 +1,7 @@
 import createDB from './db.js'
 import createBee from './bee.js'
 import { createHash } from 'crypto'
+import { validateEvent as nostrValidate, verifySignature as nostrVerify } from 'nostr-tools'
 
 const prefix = 'hyper-nostr-'
 const persistentKinds = Object.freeze(['regular', 'replaceable'])
@@ -56,7 +57,11 @@ export default async function createSwarm (sdk, _topic) {
 
   function streamEvent (event, sender) {
     subs.forEach(({ filters, socket }, key) => {
-      if (sender !== socket && validateEvent(event, filters)) socket.send(`["EVENT", "${key}", ${JSON.stringify((delete event._id, event))}]`)
+      if (sender !== socket &&
+        nostrValidate(event) &&
+        nostrVerify(event) &&
+        validateEvent(event, filters)
+      ) socket.send(`["EVENT", "${key}", ${JSON.stringify((delete event._id, event))}]`)
     })
   }
 
