@@ -32,7 +32,7 @@ import createSwarm from 'hyper-nostr'
 import goodbye from 'graceful-goodbye'
 
 const yourStorageFolder = '.hyper-nostr-relay' // set to false to not persist
-cosnt theTopic = 'nostr'
+const theTopic = 'nostr'
 
 const sdk = SDK.create({
     storage: yourStorageFolder
