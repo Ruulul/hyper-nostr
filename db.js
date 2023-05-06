@@ -48,6 +48,7 @@ export default async function createDB (bee) {
     } else throw new Error('Unrecognized event kind: ' + type)
   }
   async function queryEvents (filters) {
+    await bee.autobase.view.update()
     if (!filters ||
       filters
         .filter(filter => Object.keys(filter).length)
