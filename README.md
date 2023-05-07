@@ -31,7 +31,7 @@ import * as SDK from 'hyper-sdk'
 /** (sdk: SDK.SDK, topic: string) => swarm object */
 import createSwarm from 'hyper-nostr'
 /** (event: Event, filters: Filter[]) => Boolean */
-import { validateEvent } from 'hyper-nostr/db.js' // to validate a single event through NIP-01 and NIP-12
+import { validateEvent } from 'hyper-nostr' // to validate a single event through NIP-01 and NIP-12
 import goodbye from 'graceful-goodbye'
 
 const yourStorageFolder = '.hyper-nostr-relay' // set to false to not persist
