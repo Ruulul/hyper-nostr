@@ -11,7 +11,7 @@ export default async function createSwarm (sdk, _topic) {
   const subscriptions = new Map()
 
   const bee = await createBee(sdk, topic)
-  const { validateEvent, handleEvent, queryEvents } = await createDB(bee)
+  const { handleEvent, queryEvents } = await createDB(bee)
 
   const knownDBs = new Set()
   knownDBs.add(bee.autobase.localInput.url)
@@ -101,7 +101,7 @@ const validateHandlers = {
   since: (event, filter) => event.created_at > filter,
   until: (event, filter) => event.created_at < filter
 }
-export function validateEvent (event, filters) {
+function validateEvent (event, filters) {
   return filters
     .map(filter =>
       Object.entries(filter)
