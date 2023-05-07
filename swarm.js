@@ -3,6 +3,8 @@ import createBee from './bee.js'
 import { createHash } from 'crypto'
 import { validateEvent as nostrValidate, verifySignature as nostrVerify } from 'nostr-tools'
 
+export { validateEvent } from './db.js'
+
 const prefix = 'hyper-nostr-'
 const persistentKinds = Object.freeze(['regular', 'replaceable'])
 
