@@ -3,14 +3,12 @@ import createBee from './bee.js'
 import { createHash } from 'crypto'
 import { validateEvent as nostrValidate, verifySignature as nostrVerify } from 'nostr-tools'
 
-export { validateEvent } from './db.js'
-
 const prefix = 'hyper-nostr-'
 const persistentKinds = Object.freeze(['regular', 'replaceable'])
 
 export default async function createSwarm (sdk, _topic) {
   const topic = prefix + _topic
-  const subs = new Map()
+  const subscriptions = new Map()
 
   const bee = await createBee(sdk, topic)
   const { validateEvent, handleEvent, queryEvents } = await createDB(bee)
@@ -39,31 +37,25 @@ export default async function createSwarm (sdk, _topic) {
     logPeers()
     broadcastDBs()
   })
-  discovery.on('peer-remove', _ => {
-    logPeers()
-    console.log(`${discovery.peers.length} peers on ${_topic}`)
-  })
+  discovery.on('peer-remove', logPeers)
   logPeers()
   broadcastDBs()
 
   console.log(`swarm ${topic} created with hyper!`)
-  return { subs, sendEvent, queryEvents, update }
+  return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription }
 
   function logPeers () {
     console.log(`${discovery.peers.length} peers on ${_topic}!`)
   }
 
-  async function update () {
-    await bee.bee.update()
-  }
-
   function streamEvent (event, sender) {
-    subs.forEach(({ filters, socket }, key) => {
+    subscriptions.forEach(({ filters, socket, receivedEvents }, key) => {
       if (sender !== socket &&
+        !receivedEvents.has(event.id) &&
         nostrValidate(event) &&
         nostrVerify(event) &&
         validateEvent(event, filters)
-      ) socket.send(`["EVENT", "${key}", ${JSON.stringify((delete event._id, event))}]`)
+      ) sendEventTo(event, socket, key, receivedEvents)
     })
   }
 
@@ -79,10 +71,47 @@ export default async function createSwarm (sdk, _topic) {
 
   async function handleNewDB (url) {
     knownDBs.add(url)
-    return bee.autobase.addInput(await sdk.get(url))
+    await bee.autobase.addInput(await sdk.get(url))
+    subscriptions.forEach((sub, key) => sendQueryToSubscription(sub, key, { hasLimit: false }))
   }
+
+  async function sendQueryToSubscription ({ filters, socket, receivedEvents }, key, { hasLimit } = { hasLimit: true }) {
+    return queryEvents(filters, { hasLimit }).then(events =>
+      events.forEach(event => {
+        if (!receivedEvents.has(event.id)) sendEventTo(event, socket, key, receivedEvents)
+      })
+    )
+  }
+}
+
+function sendEventTo (event, socket, id, receivedEvents) {
+  receivedEvents.add(event.id)
+  socket.send(`["EVENT", "${id}", ${JSON.stringify((delete event._id, event))}]`)
 }
 
 function createTopicBuffer (topic) {
   return createHash('sha256').update(topic).digest()
+}
+
+const validateHandlers = {
+  ids: (event, filter) => filter.some(id => event.id.startsWith(id)),
+  kinds: (event, filter) => filter.includes(event.kind),
+  authors: (event, filter) => filter.some(author => event.pubkey.startsWith(author)),
+  hastag: (event, filter, tag) => event.tags.some(([_tag, key]) => _tag === tag.slice(1) && filter.includes(key)),
+  since: (event, filter) => event.created_at > filter,
+  until: (event, filter) => event.created_at < filter
+}
+export function validateEvent (event, filters) {
+  return filters
+    .map(filter =>
+      Object.entries(filter)
+        .filter(([key]) => key.startsWith('#') || (key in validateEvent && key !== 'limit'))
+        .map(([key, value]) =>
+          key.startsWith('#')
+            ? validateHandlers.hastag(event, value, key)
+            : validateHandlers[key](event, value)
+        )
+        .every(Boolean)
+    )
+    .some(Boolean)
 }

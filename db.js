@@ -11,14 +11,6 @@ const filtersHandlers = {
   since: filter => ['created_at', { $gt: filter }],
   until: filter => ['created_at', { $lt: filter }]
 }
-const validateHandlers = {
-  ids: (event, filter) => filter.some(id => event.id.startsWith(id)),
-  kinds: (event, filter) => filter.includes(event.kind),
-  authors: (event, filter) => filter.some(author => event.pubkey.startsWith(author)),
-  hastag: (event, filter, tag) => event.tags.some(([_tag, key]) => _tag === tag.slice(1) && filter.includes(key)),
-  since: (event, filter) => event.created_at > filter,
-  until: (event, filter) => event.created_at < filter
-}
 export default async function createDB (bee) {
   const db = new DB(bee)
 
@@ -33,7 +25,7 @@ export default async function createDB (bee) {
   await events.createIndex(['kind', 'pubkey'])
   await events.createIndex(['kind', 'created_at'])
 
-  return { handleEvent, queryEvents, validateEvent }
+  return { handleEvent, queryEvents }
 
   function handleEvent (event, type) {
     if (!(nostrValidate(event) && nostrSignature(event))) return
@@ -47,7 +39,7 @@ export default async function createDB (bee) {
       console.log('sorry, delete events arent supported yet')
     } else throw new Error('Unrecognized event kind: ' + type)
   }
-  async function queryEvents (filters) {
+  async function queryEvents (filters, { hasLimit }) {
     await bee.autobase.view.update()
     if (!filters ||
       filters
@@ -62,23 +54,9 @@ export default async function createDB (bee) {
         queryResult.set(doc.id, doc)
       }
     }
-    return Array.from(queryResult.values()).slice(0, limit > 0 ? limit : defaultLimit)
+    if (hasLimit) return Array.from(queryResult.values()).slice(0, limit > 0 ? limit : defaultLimit)
+    else return Array.from(queryResult.values())
   }
-}
-
-export function validateEvent (event, filters) {
-  return filters
-    .map(filter =>
-      Object.entries(filter)
-        .filter(([key]) => key.startsWith('#') || (key in filtersHandlers && key !== 'limit'))
-        .map(([key, value]) =>
-          key.startsWith('#')
-            ? validateHandlers.hastag(event, value, key)
-            : validateHandlers[key](event, value)
-        )
-        .every(Boolean)
-    )
-    .some(Boolean)
 }
 
 function buildQueries (filters) {
