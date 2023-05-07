@@ -29,6 +29,7 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 ```js
 import * as SDK from 'hyper-sdk'
 import createSwarm from 'hyper-nostr'
+import { validateEvent } from 'hyper-nostr/db.js' // to validate a single event through NIP-01 and NIP-12
 import goodbye from 'graceful-goodbye'
 
 const yourStorageFolder = '.hyper-nostr-relay' // set to false to not persist
