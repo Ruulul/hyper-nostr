@@ -59,8 +59,7 @@ export default async function createSwarm (sdk, _topic) {
 
   function streamEvent (event) {
     subscriptions.forEach(({ filters, socket, receivedEvents }, key) => {
-      if (!receivedEvents.has(event.id) &&
-        nostrValidate(event) &&
+      if (nostrValidate(event) &&
         nostrVerify(event) &&
         validateEvent(event, filters)
       ) sendEventTo(event, socket, key, receivedEvents)
@@ -86,16 +85,16 @@ export default async function createSwarm (sdk, _topic) {
 
   async function sendQueryToSubscription ({ filters, socket, receivedEvents }, key, { hasLimit } = { hasLimit: true }) {
     return queryEvents(filters, { hasLimit }).then(events =>
-      events.forEach(event => {
-        if (!receivedEvents.has(event.id)) sendEventTo(event, socket, key, receivedEvents)
-      })
+      events.forEach(event => sendEventTo(event, socket, key, receivedEvents))
     )
   }
 }
 
 function sendEventTo (event, socket, id, receivedEvents) {
-  receivedEvents.add(event.id)
-  socket.send(`["EVENT", "${id}", ${JSON.stringify((delete event._id, event))}]`)
+  if (!receivedEvents.has(event.id)) {
+    socket.send(`["EVENT", "${id}", ${JSON.stringify((delete event._id, event))}]`)
+    receivedEvents.add(event.id)
+  }
 }
 
 function createTopicBuffer (topic) {
