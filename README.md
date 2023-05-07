@@ -28,7 +28,9 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 ## Code API
 ```js
 import * as SDK from 'hyper-sdk'
+/** (sdk: SDK.SDK, topic: string) => swarm object */
 import createSwarm from 'hyper-nostr'
+/** (event: Event, filters: Filter[]) => Boolean */
 import { validateEvent } from 'hyper-nostr/db.js' // to validate a single event through NIP-01 and NIP-12
 import goodbye from 'graceful-goodbye'
 
