@@ -39,7 +39,7 @@ export default async function createDB (bee) {
       console.log('sorry, delete events arent supported yet')
     } else throw new Error('Unrecognized event kind: ' + type)
   }
-  async function queryEvents (filters, { hasLimit }) {
+  async function queryEvents (filters, { hasLimit } = { hasLimit: true }) {
     await bee.autobase.view.update()
     if (!filters ||
       filters

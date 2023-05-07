@@ -81,7 +81,7 @@ fi.register(async function (fastify) {
             subscriptions.delete(value)
             break
           case 'COUNT':
-            subscriptions.get(value).socket.send(`["COUNT", "${value}", ${JSON.stringify({ count: queryEvents(rest).length })}]`)
+            socket.send(`["COUNT", "${value}", ${JSON.stringify({ count: (await queryEvents(rest)).length })}]`)
             break
           default:
             socket.send('["NOTICE", "Unrecognized event"]')

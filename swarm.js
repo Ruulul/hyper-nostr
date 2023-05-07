@@ -4,7 +4,16 @@ import { createHash } from 'crypto'
 import { validateEvent as nostrValidate, verifySignature as nostrVerify } from 'nostr-tools'
 
 const prefix = 'hyper-nostr-'
+
 const persistentKinds = Object.freeze(['regular', 'replaceable'])
+const replaceableKinds = Object.freeze([0, 3])
+function getEventType (kind) {
+  if (kind === 5) return 'delete'
+  if (replaceableKinds.includes(kind)) return 'replaceable'
+  if (kind < 10000) return 'regular'
+  if (kind < 20000) return 'replaceable'
+  if (kind < 30000) return 'ephemeral'
+}
 
 export default async function createSwarm (sdk, _topic) {
   const topic = prefix + _topic
@@ -114,13 +123,4 @@ function validateEvent (event, filters) {
         .every(Boolean)
     )
     .some(Boolean)
-}
-
-const replaceableKinds = Object.freeze([0, 3])
-function getEventType (kind) {
-  if (kind === 5) return 'delete'
-  if (replaceableKinds.includes(kind)) return 'replaceable'
-  if (kind < 10000) return 'regular'
-  if (kind < 20000) return 'replaceable'
-  if (kind < 30000) return 'ephemeral'
 }
