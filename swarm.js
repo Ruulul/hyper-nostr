@@ -48,10 +48,9 @@ export default async function createSwarm (sdk, _topic) {
     console.log(`${discovery.peers.length} peers on ${_topic}!`)
   }
 
-  function streamEvent (event, sender) {
+  function streamEvent (event) {
     subscriptions.forEach(({ filters, socket, receivedEvents }, key) => {
-      if (sender !== socket &&
-        !receivedEvents.has(event.id) &&
+      if (!receivedEvents.has(event.id) &&
         nostrValidate(event) &&
         nostrVerify(event) &&
         validateEvent(event, filters)
@@ -59,9 +58,10 @@ export default async function createSwarm (sdk, _topic) {
     })
   }
 
-  function sendEvent (event, type, sender) {
+  function sendEvent (event) {
+    const type = getEventType(event.kind)
     events.broadcast(event)
-    streamEvent(event, sender)
+    streamEvent(event)
     if (persistentKinds.includes(type)) return handleEvent(event, type)
   }
 
@@ -114,4 +114,13 @@ function validateEvent (event, filters) {
         .every(Boolean)
     )
     .some(Boolean)
+}
+
+const replaceableKinds = Object.freeze([0, 3])
+function getEventType (kind) {
+  if (kind === 5) return 'delete'
+  if (replaceableKinds.includes(kind)) return 'replaceable'
+  if (kind < 10000) return 'regular'
+  if (kind < 20000) return 'replaceable'
+  if (kind < 30000) return 'ephemeral'
 }

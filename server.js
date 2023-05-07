@@ -68,7 +68,7 @@ fi.register(async function (fastify) {
               socket.send('["NOTICE", "Unrecognized event kind"]')
               break
             }
-            sendEvent(value, type, socket)
+            sendEvent(value)
             socket.send(`["OK", ${value.id}, true, ""]`)
             break
           }
