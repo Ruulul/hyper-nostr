@@ -51,13 +51,11 @@ fi.register(async function (fastify) {
     wsHandler: async (con, req) => {
       let { topic } = req.params
       if (!topic) topic = 'nostr'
-      console.log('ws connection started')
       if (!topics.has(topic)) {
         topics.set(topic, await createSwarm(sdk, topic))
       }
       const { sendEvent, subscriptions, queryEvents, sendQueryToSubscription } = topics.get(topic)
       const { socket } = con
-      console.log('ws connection stablished')
 
       socket.on('message', async message => {
         const [type, value, ...rest] = JSON.parse(message)
