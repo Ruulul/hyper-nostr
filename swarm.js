@@ -5,7 +5,7 @@ import { validateEvent as nostrValidate, verifySignature as nostrVerify } from '
 
 const prefix = 'hyper-nostr-'
 
-const persistentKinds = Object.freeze(['regular', 'replaceable'])
+const persistentKinds = Object.freeze(['regular', 'replaceable', 'parameterized replaceable'])
 const replaceableKinds = Object.freeze([0, 3])
 function getEventType (kind) {
   if (kind === 5) return 'delete'
@@ -13,6 +13,7 @@ function getEventType (kind) {
   if (kind < 10000) return 'regular'
   if (kind < 20000) return 'replaceable'
   if (kind < 30000) return 'ephemeral'
+  if (kind < 40000) return 'parameterized replaceable'
 }
 
 export default async function createSwarm (sdk, _topic) {
@@ -42,16 +43,17 @@ export default async function createSwarm (sdk, _topic) {
       if (sawNew) broadcastDBs()
     }
   })
-  discovery.on('peer-add', _ => {
-    logPeers()
-    broadcastDBs()
-  })
+  discovery.on('peer-add', initConnection)
   discovery.on('peer-remove', logPeers)
-  logPeers()
-  broadcastDBs()
+  initConnection()
 
   console.log(`swarm ${topic} created with hyper!`)
   return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription }
+
+  function initConnection () {
+    logPeers()
+    broadcastDBs()
+  }
 
   function logPeers () {
     console.log(`${discovery.peers.length} peers on ${_topic}!`)

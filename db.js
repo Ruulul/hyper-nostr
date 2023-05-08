@@ -27,7 +27,7 @@ export default async function createDB (bee) {
 
   return { handleEvent, queryEvents }
 
-  function handleEvent (event, type) {
+  async function handleEvent (event, type) {
     if (!(nostrValidate(event) && nostrSignature(event))) return
     if (type === 'regular') events.insert(event)
     else if (type === 'replaceable') {
@@ -35,6 +35,27 @@ export default async function createDB (bee) {
         pubkey: event.pubkey,
         kind: event.kind
       }, event, { upsert: true })
+    } else if (type === 'parameterized replaceable') {
+      const originalEvent = await events.findOne({
+        pubkey: event.pubkey,
+        kind: event.kind,
+        tags: {
+          $all: [
+            'd',
+            event.tags.find(([tag]) => tag === 'd')?.[1] || ''
+          ]
+        }
+      })
+      if (originalEvent) {
+        console.log('replacing replaceable event', originalEvent, 'with', event)
+        const updateEvent = await events.update({ _id: originalEvent._id }, event)
+        console.log(updateEvent)
+      } else {
+        console.log('first replaceable event:', event)
+        const dTag = event.tags.find(tag => tag[0] === 'd')
+        if (!dTag[1]) dTag[1] = ''
+        events.insert(event)
+      }
     } else if (type === 'delete') {
       console.log('sorry, delete events arent supported yet')
     } else throw new Error('Unrecognized event kind: ' + type)

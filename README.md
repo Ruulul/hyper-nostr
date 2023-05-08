@@ -27,7 +27,7 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 - [x] NIP-12 (generic tag queries)
 - [x] NIP-16 (event treatment)
 - [x] NIP-20 (command results)
-- [ ] NIP-33 (parametrized replaceable events)
+- [x] NIP-33 (parametrized replaceable events)
 - [x] NIP-45 (event counts)
 - [ ] NIP-50 (search)
 

@@ -40,7 +40,7 @@ fi.register(async function (fastify) {
           name: 'nostr-relay-' + (topic || 'nostr'),
           description: 'a decentralized nostr relay, powered by Hypercore',
           pubkey: 'd5b4107402ea8a23719f8c7fc57e7eaba6bc54e7c2da62b39300207c156978f1',
-          'supported-nips': [1, 2, 11, 12, 16, 20, 45],
+          'supported-nips': [1, 2, 11, 12, 16, 20, 33, 45],
           software: 'https://github.com/Ruulul/hyper-nostr'
         })
       } else reply.send()
@@ -62,6 +62,7 @@ fi.register(async function (fastify) {
           case 'EVENT': {
             if (!(validateEvent(value) && verifySignature(value))) {
               socket.send('["NOTICE", "Invalid event"]')
+              break
             }
             const type = getEventType(value.kind)
             if (!type) {
