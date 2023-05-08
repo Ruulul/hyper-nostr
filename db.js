@@ -48,8 +48,7 @@ export default async function createDB (bee) {
         }
       })
       if (originalEvent) {
-        const updateEvent = await events.update({ _id: originalEvent._id }, event)
-        console.log(updateEvent)
+        await events.update({ _id: originalEvent._id }, event)
       } else {
         const dTag = event.tags.find(tag => tag[0] === 'd')
         if (!dTag[1]) dTag[1] = ''
