@@ -5,7 +5,7 @@ import fastifyWebsocket from '@fastify/websocket'
 import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from 'graceful-goodbye'
-import { validateEvent, verifySignature } from 'nostr-tools'
+import { validateEvent, getEventType } from './nostr_events.js'
 
 const port = process.argv[2] || 3000
 const startingTopics = process.argv.slice(3)
@@ -15,7 +15,10 @@ const sdk = await SDK.create({
   autoJoin: true
 })
 console.log('your key is', sdk.publicKey.toString('hex'))
-goodbye(_ => sdk.close())
+goodbye(async _ => {
+  console.log('exiting...')
+  await sdk.close()
+})
 
 const fi = fastify()
 
@@ -60,7 +63,7 @@ fi.register(async function (fastify) {
         const [type, value, ...rest] = JSON.parse(message)
         switch (type) {
           case 'EVENT': {
-            if (!(validateEvent(value) && verifySignature(value))) {
+            if (!validateEvent(value)) {
               socket.send('["NOTICE", "Invalid event"]')
               break
             }
@@ -86,7 +89,6 @@ fi.register(async function (fastify) {
             break
           default:
             socket.send('["NOTICE", "Unrecognized event"]')
-            console.log('Unrecognized event')
         }
       })
       socket.once('close', _ => {
@@ -100,12 +102,3 @@ fi.listen({ port }, err => {
   if (err) throw err
   console.log(`listening on ${port}`)
 })
-
-const replaceableKinds = Object.freeze([0, 3])
-function getEventType (kind) {
-  if (kind === 5) return 'delete'
-  if (replaceableKinds.includes(kind)) return 'replaceable'
-  if (kind < 10000) return 'regular'
-  if (kind < 20000) return 'replaceable'
-  if (kind < 30000) return 'ephemeral'
-}

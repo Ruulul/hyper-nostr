@@ -1,5 +1,5 @@
 import { DB } from 'hyperdeebee'
-import { validateEvent as nostrValidate, verifySignature as nostrSignature } from 'nostr-tools'
+import { getEventType, validateEvent } from './nostr_events.js'
 
 const defaultLimit = Infinity
 
@@ -27,8 +27,9 @@ export default async function createDB (bee) {
 
   return { handleEvent, queryEvents }
 
-  async function handleEvent (event, type) {
-    if (!(nostrValidate(event) && nostrSignature(event))) return
+  async function handleEvent (event) {
+    if (!validateEvent(event)) return
+    const type = getEventType(event.kind)
     if (type === 'regular') events.insert(event)
     else if (type === 'replaceable') {
       events.update({
@@ -47,11 +48,9 @@ export default async function createDB (bee) {
         }
       })
       if (originalEvent) {
-        console.log('replacing replaceable event', originalEvent, 'with', event)
         const updateEvent = await events.update({ _id: originalEvent._id }, event)
         console.log(updateEvent)
       } else {
-        console.log('first replaceable event:', event)
         const dTag = event.tags.find(tag => tag[0] === 'd')
         if (!dTag[1]) dTag[1] = ''
         events.insert(event)
@@ -75,8 +74,9 @@ export default async function createDB (bee) {
         queryResult.set(doc.id, doc)
       }
     }
-    if (hasLimit) return Array.from(queryResult.values()).slice(0, limit > 0 ? limit : defaultLimit)
-    else return Array.from(queryResult.values())
+    const queryArray = Array.from(queryResult.values()).sort((a, b) => b.created_at - a.created_at)
+    if (hasLimit) return queryArray.slice(0, limit > 0 ? limit : defaultLimit)
+    else return queryArray
   }
 }
 
