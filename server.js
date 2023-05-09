@@ -17,7 +17,10 @@ const sdk = await SDK.create({
 console.log('your key is', sdk.publicKey.toString('hex'))
 goodbye(async _ => {
   console.log('exiting...')
-  await sdk.close()
+  await sdk.close().catch(e => {
+    console.error(e)
+    throw e
+  })
 })
 
 const fi = fastify()
@@ -54,6 +57,7 @@ fi.register(async function (fastify) {
       if (!topics.has(topic)) {
         topics.set(topic, await createSwarm(sdk, topic))
       }
+      console.log('new connection for', topic)
       const { sendEvent, subscriptions, queryEvents, sendQueryToSubscription } = topics.get(topic)
       const { socket } = con
 
@@ -96,7 +100,7 @@ fi.register(async function (fastify) {
   })
 })
 
-fi.listen({ port }, err => {
+fi.listen({ port, host: '0.0.0.0' }, err => {
   if (err) throw err
   console.log(`listening on ${port}`)
 })
