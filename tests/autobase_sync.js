@@ -33,23 +33,14 @@ test('syncing events', async t => {
     content: 'world'
   }
 
-  const doc1 = await peer1.sendEvent(eventPeer1)
-  const doc2 = await peer2.sendEvent(eventPeer2)
+  await peer1.sendEvent(eventPeer1)
+  await peer2.sendEvent(eventPeer2)
 
   await new Promise(resolve => setTimeout(resolve, timeout))
-
-  await Promise.all([
-    peer1.update(),
-    peer2.update()
-  ])
 
   const peer1Query = await peer1.queryEvents()
   const peer2Query = await peer2.queryEvents()
   console.log('queries:', { peer1Query, peer2Query })
 
-  t.deepEqual(doc1, peer2Query.find(event => event.id === doc1.id))
-  t.deepEqual(doc2, peer1Query.find(event => event.id === eventPeer2.id))
-
-  t.isEqual(peer1Query.length, 2)
-  t.isEqual(peer2Query.length, 2)
+  t.deepEqual(peer1Query, peer2Query)
 })

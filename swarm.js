@@ -66,7 +66,7 @@ export default async function createSwarm (sdk, _topic) {
   function sendEvent (event) {
     events.broadcast(event)
     streamEvent(event)
-    if (isPersistent(event)) handleEvent(event)
+    if (isPersistent(event)) return handleEvent(event)
   }
 
   function broadcastDBs () {
