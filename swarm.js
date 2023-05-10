@@ -29,7 +29,10 @@ export default async function createSwarm (sdk, _topic) {
         sawNew = true
         await handleNewDB(url)
       }
-      if (sawNew) broadcastDBs()
+      if (sawNew) {
+        console.log('DB count:', knownDBs.size)
+        broadcastDBs()
+      }
     }
   })
   discovery.on('peer-add', initConnection)
@@ -66,15 +69,14 @@ export default async function createSwarm (sdk, _topic) {
 
   async function handleNewDB (url) {
     knownDBs.add(url)
-    console.log('DB count:', knownDBs.size)
     await bee.autobase.addInput(await sdk.get(url))
     subscriptions.forEach((sub, key) => sendQueryToSubscription(sub, key, { hasLimit: false }))
   }
 
   async function sendQueryToSubscription (sub, key, { hasLimit } = { hasLimit: true }) {
-    return queryEvents(sub.filters, { hasLimit }).then(events =>
-      events.forEach(event => sendEventTo(event, sub, key))
-    )
+    return queryEvents(sub.filters, { hasLimit }).then(events => {
+      for (let i = events.length - 1; i >= 0; i--) sendEventTo(events[i], sub, key)
+    })
   }
 }
 

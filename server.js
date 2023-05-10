@@ -21,6 +21,7 @@ goodbye(async _ => {
 })
 
 const fi = fastify()
+goodbye(_ => fi.close())
 
 const topics = new Map()
 await Promise.all(
