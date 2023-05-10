@@ -2,6 +2,7 @@ import createDB from './db.js'
 import createBee from './bee.js'
 import { createHash } from 'crypto'
 import { validateEvent, isPersistent } from './nostr_events.js'
+import goodbye from 'graceful-goodbye'
 
 const prefix = 'hyper-nostr-'
 
@@ -16,6 +17,7 @@ export default async function createSwarm (sdk, _topic) {
   knownDBs.add(bee.autobase.localInput.url)
 
   const discovery = await sdk.get(createTopicBuffer(topic))
+  goodbye(_ => discovery.close())
   const events = discovery.registerExtension(topic, {
     encoding: 'json',
     onmessage: streamEvent
@@ -30,8 +32,8 @@ export default async function createSwarm (sdk, _topic) {
         await handleNewDB(url)
       }
       if (sawNew) {
-        console.log('DB count:', knownDBs.size)
         broadcastDBs()
+        logDBs()
       }
     }
   })
@@ -44,11 +46,15 @@ export default async function createSwarm (sdk, _topic) {
 
   function initConnection () {
     logPeers()
+    logDBs()
     broadcastDBs()
   }
 
   function logPeers () {
     console.log(`${discovery.peers.length} peers on ${_topic}!`)
+  }
+  function logDBs () {
+    console.log('DB count:', bee.autobase.inputs.length)
   }
 
   function streamEvent (event) {
