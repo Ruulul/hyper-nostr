@@ -6,6 +6,9 @@ import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from './goodbye.js'
 import { validateEvent, getEventType } from './nostr_events.js'
+import { default as fsWithCallbacks } from 'fs'
+const fs = fsWithCallbacks.promises
+//const fs = require('fs').promises;
 
 const port = process.argv[2] || 3000
 const startingTopics = process.argv.slice(3)
@@ -14,7 +17,48 @@ const sdk = await SDK.create({
   storage: '.hyper-nostr-relay',
   autoJoin: true
 })
-console.log('your key is', sdk.publicKey.toString('hex'))
+
+async function writekey () {
+  try {
+    // const content = 'Some content!'
+    await fs.appendFile('KEYS', sdk.publicKey.toString('hex'))
+    console.log('your key is', sdk.publicKey.toString('hex'))
+  } catch (err) {
+    console.log(err)
+  }
+}
+writekey()
+
+import child_process from 'child_process';
+const exec = child_process.exec;
+
+const nostril = ""
+
+exec("which nostril", (error, stdout, stderr) => {
+    if (error) {
+        console.log(`error: ${error.message}`);
+        return nil;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return nil;
+    }
+    const nostril = stdout;
+});
+
+exec(`nostril --sec ${sdk.publicKey.toString('hex')} --envelope --content "" `, (error, stdout, stderr) => {
+    if (error) {
+        console.log(`51: error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`55: stderr: ${stderr}`);
+        return;
+    }
+    console.log(`nostril:58: stdout: ${stdout}`);
+    //console.log(`${stdout}`);
+});
+
 goodbye(async _ => {
   console.log('exiting...')
   await sdk.close().catch(e => {
