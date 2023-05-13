@@ -2,7 +2,7 @@
 
 import createBee from './bee.js'
 import * as SDK from 'hyper-sdk'
-import goodbye from 'graceful-goodbye'
+import goodbye from './goodbye.js'
 import { DB } from 'hyperdeebee'
 import { createInterface } from 'readline'
 const int = createInterface(process.stdin, process.stdout)

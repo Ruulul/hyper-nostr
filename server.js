@@ -4,7 +4,7 @@ import fastify from 'fastify'
 import fastifyWebsocket from '@fastify/websocket'
 import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
-import goodbye from 'graceful-goodbye'
+import goodbye from './goodbye.js'
 import { validateEvent, getEventType } from './nostr_events.js'
 
 const port = process.argv[2] || 3000

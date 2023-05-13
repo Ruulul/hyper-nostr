@@ -37,7 +37,7 @@ export default async function createDB (bee) {
         kind: event.kind
       }, event, { upsert: true })
     } else if (type === 'parameterized replaceable') {
-      const originalEvent = await events.findOne({
+      const originalEvents = await events.find({
         pubkey: event.pubkey,
         kind: event.kind,
         tags: {
@@ -47,8 +47,8 @@ export default async function createDB (bee) {
           ]
         }
       })
-      if (originalEvent) {
-        await events.update({ _id: originalEvent._id }, event)
+      if (originalEvents) {
+        for (const originalEvent of originalEvents) await events.update({ _id: originalEvent._id }, event)
       } else {
         const dTag = event.tags.find(tag => tag[0] === 'd')
         if (!dTag[1]) dTag[1] = ''
