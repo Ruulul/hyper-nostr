@@ -29,7 +29,6 @@ test('delete', async t => {
   event.sign = signEvent(event, userPrivK)
 
   await peer.sendEvent(event)
-  console.log(await peer.queryEvents())
 
   const deleteEvent = {
     kind: 5,
@@ -43,7 +42,6 @@ test('delete', async t => {
 
   await peer.sendEvent(deleteEvent)
   await peer.update()
-  console.log(await peer.queryEvents())
 
   const foundEvent = (await peer.queryEvents()).find(_event => _event.id === event.id)
   console.log(foundEvent)
