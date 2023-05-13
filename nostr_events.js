@@ -1,6 +1,6 @@
 import { validateEvent as nostrValidate, verifySignature as nostrVerify } from 'nostr-tools'
 
-export const persistentKinds = Object.freeze(['regular', 'replaceable', 'parameterized replaceable'])
+export const persistentKinds = Object.freeze(['regular', 'delete', 'replaceable', 'parameterized replaceable'])
 const replaceableKinds = Object.freeze([0, 3])
 export function getEventType (kind) {
   if (kind === 5) return 'delete'
