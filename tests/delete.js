@@ -41,9 +41,7 @@ test('delete', async t => {
   deleteEvent.sign = signEvent(deleteEvent, userPrivK)
 
   await peer.sendEvent(deleteEvent)
-  await peer.update()
 
   const foundEvent = (await peer.queryEvents()).find(_event => _event.id === event.id)
-  console.log(foundEvent)
   t.assert(!foundEvent)
 })

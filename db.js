@@ -30,7 +30,7 @@ export default async function createDB (bee) {
   async function handleEvent (event) {
     if (!validateEvent(event)) return
     const type = getEventType(event.kind)
-    if (type === 'regular') events.insert(event)
+    if (type === 'regular') await events.insert(event)
     else if (type === 'replaceable') {
       events.update({
         pubkey: event.pubkey,
