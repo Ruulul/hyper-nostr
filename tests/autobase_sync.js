@@ -37,6 +37,7 @@ test('syncing events', async t => {
   await peer2.sendEvent(eventPeer2)
 
   await new Promise(resolve => setTimeout(resolve, timeout))
+  await Promise.all([peer1.update(), peer2.update()])
 
   const peer1Query = await peer1.queryEvents()
   const peer2Query = await peer2.queryEvents()

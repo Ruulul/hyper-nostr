@@ -1,6 +1,6 @@
 {
   "name": "hyper-nostr",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "a distributed local-first nostr relay that syncs on background based on topic",
   "main": "swarm.js",
   "type": "module",
@@ -29,7 +29,7 @@
     "graceful-goodbye": "^1.2.1",
     "hyper-sdk": "^4.2.4",
     "hyperbee": "^2.8.0",
-    "hyperdeebee": "github:Ruulul/hyperdeebee",
+    "hyperdeebee": "github:Telios-org/hyperdeebee",
     "nostr-tools": "^1.10.1",
     "tape": "^5.6.3"
   },

@@ -34,6 +34,7 @@ export default async function createSwarm (sdk, _topic) {
       if (sawNew) {
         broadcastDBs()
         logDBs()
+        await update()
       }
     }
   })
@@ -42,7 +43,7 @@ export default async function createSwarm (sdk, _topic) {
   initConnection()
 
   console.log(`swarm ${topic} created with hyper!`)
-  return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription }
+  return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription, update }
 
   function initConnection () {
     logPeers()
@@ -54,7 +55,7 @@ export default async function createSwarm (sdk, _topic) {
     console.log(`${discovery.peers.length} peers on ${_topic}!`)
   }
   function logDBs () {
-    console.log('DB count:', bee.autobase.inputs.length)
+    console.log('DB count:', bee.autobase.inputs.filter(core => core.readable).length)
   }
 
   function streamEvent (event) {
@@ -71,6 +72,10 @@ export default async function createSwarm (sdk, _topic) {
 
   function broadcastDBs () {
     DBBroadcast.broadcast(Array.from(knownDBs))
+  }
+
+  function update () {
+    return bee.autobase.view.update()
   }
 
   async function handleNewDB (url) {

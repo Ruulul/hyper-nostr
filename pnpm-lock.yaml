@@ -23,7 +23,7 @@ dependencies:
     specifier: ^2.8.0
     version: 2.8.0
   hyperdeebee:
-    specifier: github:Ruulul/hyperdeebee
+    specifier: github:Telios-org/hyperdeebee
     version: github.com/Ruulul/hyperdeebee/d0cad8b133700d11797963b2547214db91258378
   nostr-tools:
     specifier: ^1.10.1

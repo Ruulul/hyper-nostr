@@ -55,7 +55,13 @@ export default async function createDB (bee) {
         events.insert(event)
       }
     } else if (type === 'delete') {
-      console.log('sorry, delete events arent supported yet')
+      for await (const toDelete of events.find({
+        id: {
+          $in: event.tags.filter(t => t[0] === 'e').map(t => t[1])
+        }
+      })) {
+        if (toDelete.pubkey === event.pubkey) await events.delete({ _id: toDelete._id })
+      }
     } else throw new Error('Unrecognized event kind: ' + type)
   }
   async function queryEvents (filters, { hasLimit } = { hasLimit: true }) {

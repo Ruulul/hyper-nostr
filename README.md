@@ -22,7 +22,7 @@ The hyperswarm and cores management was highly abstracted thanks to [Hyper SDK](
 - [x] NIP-01 (mandatory nostr implementation)
 - [x] NIP-02 (contact lists)
 - [ ] NIP-04 (direct messages)
-- [ ] NIP-09 (event deletion)
+- [x] NIP-09 (event deletion)
 - [x] NIP-11 (relay information)
 - [x] NIP-12 (generic tag queries)
 - [x] NIP-16 (event treatment)
@@ -51,6 +51,7 @@ const {
     sendEvent, // (event: Event) => document: Object | Error | void; to send an Nostr Event to the peers and the local database.
     queryEvents, // (filters: Filter[]) => Promise<Event[]>; to query the database for the events that match the list of filters 
     sendQueryToSubscription, // (sub: Subscription, key: subscriptionId, opts: { hasLimit: Boolean }) => Promise<void> // Write the events to the socket; internally includes each id on receivedEvents and dont send duplicated events
+    update // () => Promise<void>; manually sync the databases in the background
 } = await createSwarm(sdk, theTopic)
 ```
 ## Server API

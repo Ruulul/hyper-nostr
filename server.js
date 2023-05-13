@@ -30,9 +30,11 @@ const topics = new Map()
 await Promise.all(
   startingTopics
     .filter(Boolean)
-    .map(async topic =>
-      topics.set(topic, await createSwarm(sdk, topic))
-    )
+    .map(async topic => {
+      const swarm = await createSwarm(sdk, topic)
+      topics.set(topic, swarm)
+      return swarm.update()
+    })
 )
 
 fi.register(fastifyWebsocket)
@@ -47,7 +49,7 @@ fi.register(async function (fastify) {
           name: 'nostr-relay-' + (topic || 'nostr'),
           description: 'a decentralized nostr relay, powered by Hypercore',
           pubkey: 'd5b4107402ea8a23719f8c7fc57e7eaba6bc54e7c2da62b39300207c156978f1',
-          'supported-nips': [1, 2, 11, 12, 16, 20, 33, 45],
+          'supported-nips': [1, 2, 9, 11, 12, 16, 20, 33, 45],
           software: 'https://github.com/Ruulul/hyper-nostr'
         })
       } else reply.send()
@@ -58,7 +60,6 @@ fi.register(async function (fastify) {
       if (!topics.has(topic)) {
         topics.set(topic, await createSwarm(sdk, topic))
       }
-      console.log('new connection for', topic)
       const { sendEvent, subscriptions, queryEvents, sendQueryToSubscription } = topics.get(topic)
       const { socket } = con
 
