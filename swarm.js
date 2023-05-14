@@ -53,7 +53,7 @@ export default async function createSwarm (sdk, _topic) {
   return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription, update }
 
   function initConnection () {
-    requestSync.broadcast()
+    requestSync.broadcast('')
     logPeers()
     logDBs()
     broadcastDBs()
