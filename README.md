@@ -2,6 +2,8 @@
 ## Support me!
 - Sats: https://getalby.com/p/v_142857
 - Ko-fi: https://ko-fi.com/v142857
+## Join the community!
+- Discord server: https://discord.gg/SeebbwYqrg
 ## Usage
 The goal of this tool is to behave as a public relay; think of the chosen topic as a public relay, where you can send and receive notes from your peers!
 1. Install: `npm install -g hyper-nostr`
