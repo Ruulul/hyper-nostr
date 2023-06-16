@@ -346,5 +346,6 @@ success:
 -include Makefile
 -include nostcat.mk
 -include gnostr.mk
+-include venv.3.10.mk
 -include act.mk
 -include npm.mk
