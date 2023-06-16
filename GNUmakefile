@@ -347,3 +347,4 @@ success:
 -include nostcat.mk
 -include gnostr.mk
 -include act.mk
+-include npm.mk
