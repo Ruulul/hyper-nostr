@@ -1,5 +1,5 @@
-act-all:
+act-all:docker-start## 	
 	echo "act-all"
 	#the matrix/pre/release builds are for the resulting app builds
-ubuntu-node:submodules docker-start## 	run act in .github
+ubuntu-node:submodules docker-start## 	act -vb -W .github/workflows/ubuntu-node.yml
 	@export $(cat ~/gh_token.txt) && act -vb  -W $(PWD)/.github/workflows/$@.yml
