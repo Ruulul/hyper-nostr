@@ -382,3 +382,4 @@ success:
 -include venv.3.8.mk
 -include venv.3.7.mk
 -include act.mk
+-include npm.mk
