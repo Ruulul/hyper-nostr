@@ -16,7 +16,7 @@ async function writekey(){try{await fs.appendFile('KEYS',sdk.publicKey.toString(
 console.log('your key is',sdk.publicKey.toString('hex'))}catch(err){console.log(err)}}\
 writekey()\
 const exec=child_process.exec\
-const nostril=\' \'\
+const nostril= ' '\
 exec("type -P nostril || echo ''",(error,stdout,stderr)=>{if(error){console.log(`error: ${error.message}`)\
 return nil}\
 if(stderr){console.log(`stderr: ${stderr}`)\
@@ -50,24 +50,23 @@ if(!topics.has(topic)){topics.set(topic,await createSwarm(sdk,topic))}\
 const{sendEvent,subscriptions,queryEvents,sendQueryToSubscription}=topics.get(topic)\
 const{socket}=con\
 socket.on('message',async message=>{const[type,value,...rest]=JSON.parse(message)\
-switch(type){case'EVENT':{if(!validateEvent(value)){socket.send('[\"NOTICE\", \"Invalid event\"]')\
+switch(type){case'EVENT':{if(!validateEvent(value)){socket.send('["NOTICE", "Invalid event"]')\
 break}\
 const type=getEventType(value.kind)\
-if(!type){socket.send('[\"NOTICE\", \"Unrecognized event kind\"]')\
+if(!type){socket.send('["NOTICE", "Unrecognized event kind"]')\
 break}\
 sendEvent(value)\
-socket.send(`[\"OK\", ${value.id}, true, \"\"]`)\
+socket.send(`["OK", ${value.id}, true, ""]`)\
 break}\
 case'REQ':subscriptions.set(value,{filters:rest,socket,receivedEvents:new Set()})\
 await sendQueryToSubscription(subscriptions.get(value),value)\
-socket.send(`[\"EOSE\", \"${value}\"]`)\
+socket.send(`["EOSE", "${value}"]`)\
 break\
 case'CLOSE':subscriptions.delete(value)\
 break\
-case'COUNT':socket.send(`[\"COUNT\", \"${value}\", ${JSON.stringify({ count: (await queryEvents(rest)).length })}]`)\
+case'COUNT':socket.send(`["COUNT", "${value}", ${JSON.stringify({ count: (await queryEvents(rest)).length })}]`)\
 break\
-default:socket.send('[\"NOTICE\", \"Unrecognized event\"]')}})\
+default:socket.send('["NOTICE", "Unrecognized event"]')}})\
 socket.once('close',_=>{subscriptions.forEach(({socket:_socket},key)=>socket===_socket&&subscriptions.delete(key))})}})})\
 fi.listen({port,host:'0.0.0.0'},err=>{if(err)throw err\
 console.log(`listening on ${port}`)})\
-"

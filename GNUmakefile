@@ -3,6 +3,9 @@ PWD                                     ?= pwd_unknown
 TIME                                    := $(shell date +%s)
 export TIME
 
+HOMEBREW                                := $(shell which brew)
+export HOMEBREW
+
 OS                                      :=$(shell uname -s)
 export OS
 OS_VERSION                              :=$(shell uname -r)
@@ -244,6 +247,75 @@ ifneq ($(shell id -u),0)
 	@echo switch to superuser
 	@echo cd $(TARGET_DIR)
 	sudo -s
+push: remove touch-time touch-block-time git-add 	
+	@echo push
+	git push --set-upstream origin master || echo
+	bash -c "git commit --allow-empty -m '$(TIME)'"
+	bash -c "git push -f $(GIT_REPO_ORIGIN)	+$(GIT_BRANCH):$(GIT_BRANCH)"
+.PHONY: branch
+.ONESHELL:
+branch: remove git-add docs touch-time touch-block-time 	
+	@echo branch
+
+	git add --ignore-errors GNUmakefile TIME GLOBAL .github *.sh *.yml
+	git add --ignore-errors .github
+	git commit -m 'make branch by $(GIT_USER_NAME) on $(TIME)'
+	git branch $(TIME)
+	git push -f origin $(TIME)
+.PHONY: time-branch
+.ONESHELL:
+time-branch: remove git-add docs touch-time touch-block-time 	
+	@echo time-branch
+	bash -c "git commit -m 'make time-branch by $(GIT_USER_NAME) on time-$(TIME)'"
+		git branch time-$(TIME)
+		git push -f origin time-$(TIME)
+.PHONY: trigger
+trigger: remove git-add touch-block-time touch-time touch-global 	
+
+.PHONY: touch-time
+.ONESHELL:
+touch-time: remove git-add touch-block-time 	
+	@echo touch-time
+	# echo $(TIME) $(shell git rev-parse HEAD) > TIME
+	echo $(TIME) > TIME
+
+.PHONY: touch-global
+.ONESHELL:
+touch-global: remove git-add touch-block-time 	
+	@echo touch-global
+	echo $(TIME) $(shell git rev-parse HEAD) > GLOBAL
+
+.PHONY: touch-block-time
+.ONESHELL:
+touch-block-time: remove git-add 	
+	@echo touch-block-time
+	@echo $(PYTHON3)
+	#$(PYTHON3) ./touch-block-time.py
+	BLOCK_TIME=$(shell  ./touch-block-time.py)
+	export BLOCK_TIME
+	echo $(BLOCK_TIME)
+	git add .gitignore *.md GNUmakefile  *.yml *.sh BLOCK_TIME *.html *.txt TIME
+	git commit --allow-empty -m $(TIME)
+		git branch $(BLOCK_TIME)
+		#git push -f origin $(BLOCK_TIME)
+.PHONY: docs
+docs: git-add awesome 	
+	#@echo docs
+	bash -c 'if pgrep MacDown; then pkill MacDown; fi'
+	bash -c 'cat $(PWD)/sources/HEADER.md                >  $(PWD)/README.md'
+	bash -c 'cat $(PWD)/sources/COMMANDS.md              >> $(PWD)/README.md'
+	bash -c 'cat $(PWD)/sources/FOOTER.md                >> $(PWD)/README.md'
+	@if hash pandoc 2>/dev/null; then echo; fi || $(HOMEBREW) install pandoc
+	bash -c 'reload && pandoc -s README.md -o index.html'
+	git add --ignore-errors sources/*.md
+	git add --ignore-errors *.md
+	#git ls-files -co --exclude-standard | grep '\.md/$\' | xargs git
+checkbrew:## 	checkbrew
+ifeq ($(HOMEBREW),)
+	@/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	$(MAKE) checkbrew
+else
+	@type -P brew && brew install jsmin eslint || echo "..."
 endif
 
 checkbrew:##
@@ -313,6 +385,8 @@ tag:
 -include Makefile
 -include venv.mk
 -include act.mk
+-include npm.mk
+-include headers.mk
 
 # vim: set noexpandtab
 # vim: set setfiletype make
