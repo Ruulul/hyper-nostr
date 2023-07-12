@@ -6,6 +6,9 @@ export TIME
 HOMEBREW                                := $(shell which brew)
 export HOMEBREW
 
+HOMEBREW                                := $(shell which brew)
+export HOMEBREW
+
 OS                                      :=$(shell uname -s)
 export OS
 OS_VERSION                              :=$(shell uname -r)
@@ -316,6 +319,7 @@ checkbrew:## 	checkbrew
 ifeq ($(HOMEBREW),)
 	@/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && $(MAKE) success || $(MAKE) failure
 else
+	@type -P brew && brew install jsmin eslint || echo "..."
 	@type -P brew && $(MAKE) success || $(MAKE) failure
 endif
 
