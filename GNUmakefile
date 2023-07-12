@@ -315,7 +315,7 @@ ifeq ($(HOMEBREW),)
 	@/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	$(MAKE) checkbrew
 else
-	@type -P brew && brew install jsmin eslint || echo "..."
+	@type -P brew && brew install jsmin || echo "..."
 endif
 
 checkbrew:##
