@@ -190,8 +190,10 @@ pnpm:
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global @pnpm/exe  2>/tmp/gnostr-lfs.log || echo
 #@pnpm install reflect-metadata
 #@pnpm install pino-pretty
+start:run
 run:env pnpm## 	gnostr-proxy
-	@pnpm --silence install >/tmp/gnostr-lfs.log && pnpm --silence run start >/tmp/gnostr-lfs.log#&
+	@npm --silent run start
+#@pnpm --silence install >/tmp/gnostr-lfs.log && pnpm --silence run start >/tmp/gnostr-lfs.log#&
 lynx-dump:
 	@type -P lynx && lynx -dump -nolist http://localhost:6102 #&& \
     #make lynx-dump | jq -R
