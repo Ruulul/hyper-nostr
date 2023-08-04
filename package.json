@@ -20,7 +20,7 @@
     "nvm-install": "$(which nvm) exec npm install -g --force >/tmp/gnostr-lfs.log",
     "test": "$(which npm) run lint && tape tests/**/*.js",
     "lint": "standard --fix",
-    "start": "$(which node) server.js 2>/tmp/gnostr-lfs.log",
+    "start": "$(which node) --silent server.js",
     "dev": "$(which node) server.js"
   },
   "dependencies": {
