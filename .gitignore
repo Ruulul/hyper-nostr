@@ -1,3 +1,4 @@
+.env
 .gnostr/
 primary-key
 /node_modules
