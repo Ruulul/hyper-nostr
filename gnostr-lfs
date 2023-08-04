@@ -1,17 +1,22 @@
 #!/usr/bin/env bash
-gnostr-set-relays #>/tmp/gnostr-proxy.log || echo
+gnostr-set-relays >/tmp/gnostr-lfs.log || echo
 (echo `pwd`) & clear && \
 # gnostr-lfs sub-shell process
 #
 #
-NVM_VERSION=v16.20.1 > .nvmrc
+NVM_VERSION=v16.20.1 # > .nvmrc
+echo $NVM_VERSION > .nvmrc
 
-export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] >/dev/null && \. "$NVM_DIR/nvm.sh" >/dev/null && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && echo "node" && nvm install $NVM_VERSION >/dev/null && nvm use 2>/dev/null \
+## ## nvm install --no-progress  --silent 16  2>/dev/null
+## (\
+## [ ! -x "$(type -P nvm)" ] && export NVM_DIR="$HOME/.nvm" 2>/tmp/gnostr-lfs.log && [ -s "$NVM_DIR/nvm.sh" ] 2>/tmp/gnostr-lfs.log && \. "$NVM_DIR/nvm.sh" 2>/tmp/gnostr-lfs.log && [ -s "$NVM_DIR/bash_completion" 2>/tmp/gnostr-lfs.log ]  && \. "$NVM_DIR/bash_completion" >/tmp/gnostr-lfs.log  && nvm install $NVM_VERSION --no-progress --silent >/tmp/gnostr-lfs.log;
+## )>/tmp/gnostr-lfs.log;clear;\
 
 (\
 
 mkdir -p .gnostr;\
-[ ! -d .gnostr/lfs ] && git clone --depth 1 --branch master https://github.com/gnostr-org/gnostr-lfs.git .gnostr/lfs; \
-[   -d .gnostr/lfs ] && cd .gnostr/lfs && git reset --hard && git config pull.rebase true && git pull -f origin master && echo ".gnostr/lfs" >> .gitignore && make run;\
+[ ! -d .gnostr/lfs ] && git clone --quiet --depth 3 --branch master https://github.com/gnostr-org/gnostr-lfs.git .gnostr/lfs >/tmp/gnostr-lfs.log; \
+[ -d .gnostr/lfs ] && cd .gnostr/lfs && git reset --hard >/tmp/gnostr-lfs.log && git config pull.rebase true 2>/tmp/gnostr-lfs.log && git pull --quiet -f origin master 2>/tmp/gnostr-lfs.log && echo ".gnostr/lfs" >> .gitignore && npm --silent run start 2>/tmp/gnostr-lfs.log;\
+
 )#>/tmp/gnostr-proxy.log;
 
