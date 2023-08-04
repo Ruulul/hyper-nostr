@@ -184,15 +184,14 @@ env:
 	@echo -e "CACHE_VIEWS=false"                        >>.env
 	@echo -e "PROXY_URL=ws://relay.gnostr.org"          >>.env
 	@echo RELAYS=$(RELAYS)                              >>.env
-	#@cat .env > .env.example
 .PHONY:pnpm
-pnpm:nvm
-	npm i --global yarn  --force
-	npm i --global pnpm  --force
+pnpm:
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global yarn       2>/tmp/gnostr-lfs.log || echo
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global @pnpm/exe  2>/tmp/gnostr-lfs.log || echo
 #@pnpm install reflect-metadata
 #@pnpm install pino-pretty
 run:env pnpm## 	gnostr-proxy
-	@pnpm install && pnpm run start #&
+	@pnpm --silence install >/tmp/gnostr-lfs.log && pnpm --silence run start >/tmp/gnostr-lfs.log#&
 lynx-dump:
 	@type -P lynx && lynx -dump -nolist http://localhost:6102 #&& \
     #make lynx-dump | jq -R
@@ -361,7 +360,7 @@ success:
 .PHONY: nvm
 .ONESHELL:
 nvm: ## 	nvm
-	@curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash || git pull -C $(HOME)/.nvm && export NVM_DIR="$(HOME)/.nvm" && [ -s "$(NVM_DIR)/nvm.sh" ] && \. "$(NVM_DIR)/nvm.sh" && [ -s "$(NVM_DIR)/bash_completion" ] && \. "$(NVM_DIR)/bash_completion"  && nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)
+	@curl -s -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash >/tmp/gnostr-lfs.log || git pull --quiet -C $(HOME)/.nvm && export NVM_DIR="$(HOME)/.nvm" 2>/tmp/gnostr-lfs.log && [ -s "$(NVM_DIR)/nvm.sh" ] && \. "$(NVM_DIR)/nvm.sh" 2>/tmp/gnostr-lfs.log  && [ -s "$(NVM_DIR)/bash_completion" ] && \. "$(NVM_DIR)/bash_completion"  && nvm install $(NODE_VERSION)  >/tmp/gnostr-lfs.log && nvm use $(NODE_VERSION) >/tmp/gnostr-lfs.log 
 	@source ~/.bashrc && nvm alias $(NODE_ALIAS) $(NODE_VERSION) &
 
 nvm-clean: ## 	nvm-clean

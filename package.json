@@ -17,12 +17,11 @@
     "gnostr-lfs-db-explorer": "db_explore.js"
   },
   "scripts": {
-    "prepare": "npm install -g @pnpm/exe",
-    "nvm-install": "$(which nvm) exec npm install -g --force",
-    "test": "npm run lint && tape tests/**/*.js",
+    "nvm-install": "$(which nvm) exec npm install -g --force >/tmp/gnostr-lfs.log",
+    "test": "$(which npm) run lint && tape tests/**/*.js",
     "lint": "standard --fix",
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "$(which node) server.js 2>/tmp/gnostr-lfs.log",
+    "dev": "$(which node) server.js"
   },
   "dependencies": {
     "@fastify/websocket": "^8.0.0",
