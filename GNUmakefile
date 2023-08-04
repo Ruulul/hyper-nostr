@@ -247,6 +247,7 @@ ifneq ($(shell id -u),0)
 	@echo switch to superuser
 	@echo cd $(TARGET_DIR)
 	sudo -s
+endif
 push: remove touch-time touch-block-time git-add 	
 	@echo push
 	git push --set-upstream origin master || echo
@@ -311,14 +312,6 @@ docs: git-add awesome
 	git add --ignore-errors *.md
 	#git ls-files -co --exclude-standard | grep '\.md/$\' | xargs git
 checkbrew:## 	checkbrew
-ifeq ($(HOMEBREW),)
-	@/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	$(MAKE) checkbrew
-else
-	@type -P brew && brew install jsmin || echo "..."
-endif
-
-checkbrew:##
 ## checkbrew
 ifeq ($(HOMEBREW),)
 	@/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && $(MAKE) success || $(MAKE) failure
