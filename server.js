@@ -46,7 +46,7 @@ exec("type -P gnostr || echo ''", (error, stdout, stderr) => {
     console.log(`gnostr-lfs stderr: ${stderr}`)
     return nil
   }
-  console.log(`gnostr-lfs stdout: ${stdout}`);
+  //console.log(`gnostr-lfs stdout: ${stdout}`);// we silence so only the EVENT body is returned
 })
 
 exec("which gnostr || echo 'gnostr not found!!! && 1'", (error, stdout, stderr) => {
@@ -162,5 +162,5 @@ fi.register(async function (fastify) {
 
 fi.listen({ port, host: '0.0.0.0' }, err => {
   if (err) throw err
-  console.log(`listening on ${port}`)
+  //console.log(`listening on ${port}`) //we silence so that only the EVENT body is returned
 })
