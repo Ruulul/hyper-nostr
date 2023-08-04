@@ -187,7 +187,6 @@ env:
 	#@cat .env > .env.example
 .PHONY:pnpm
 pnpm:nvm
-	$(shell echo node ace generate:key) | sed 's/>.*//' > APP_KEY && cat APP_KEY
 	npm i --global yarn  --force
 	npm i --global pnpm  --force
 #@pnpm install reflect-metadata
