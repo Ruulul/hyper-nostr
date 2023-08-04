@@ -21,7 +21,7 @@
     "nvm-install": "$(which nvm) exec npm install -g --force",
     "test": "npm run lint && tape tests/**/*.js",
     "lint": "standard --fix",
-    "start": "node server.js"
+    "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
