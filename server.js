@@ -62,7 +62,7 @@ exec("which gnostr || echo 'gnostr not found!!! && 1'", (error, stdout, stderr) 
   const gnostr = stdout
 })
 
-exec(`gnostr --sec ${sdk.publicKey.toString('hex')} -t "gnostr" --envelope --content "${content}" `, (error, stdout, stderr) => {
+exec(`gnostr --sec ${sdk.publicKey.toString('hex')} --tag "gnostr" "repo" --tag "weeble" "gnostr-weeble" --tag "wobble" "gnostr-wobble" --envelope --content "${content}" `, (error, stdout, stderr) => {
   if (error) {
     console.log(`gnostr-lfs error: ${error.message}`)
     return
