@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+gnostr-set-relays #>/tmp/gnostr-proxy.log || echo
+(echo `pwd`) & clear && \
+# gnostr-lfs sub-shell process
+#
+#
+NVM_VERSION=v16.20.1 > .nvmrc
+
+export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] >/dev/null && \. "$NVM_DIR/nvm.sh" >/dev/null && [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && echo "node" && nvm install $NVM_VERSION >/dev/null && nvm use 2>/dev/null \
+
+(\
+
+mkdir -p .gnostr;\
+[ ! -d .gnostr/lfs ] && git clone --depth 1 --branch master https://github.com/gnostr-org/gnostr-lfs.git .gnostr/lfs; \
+[   -d .gnostr/lfs ] && cd .gnostr/lfs && git pull -f origin master && echo ".gnostr/lfs" >> .gitignore && make run;\
+)#>/tmp/gnostr-proxy.log;
+

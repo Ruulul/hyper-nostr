@@ -7,10 +7,10 @@ import { DB } from 'hyperdeebee'
 import { createInterface } from 'readline'
 const int = createInterface(process.stdin, process.stdout)
 
-const prefix = 'hyper-nostr-'
+const prefix = 'gnostr-lfs-'
 
 const sdk = await SDK.create({
-  storage: '.hyper-nostr-relay',
+  storage: '.gnostr/lfs',
   autoJoin: true
 })
 goodbye(_ => sdk.close())

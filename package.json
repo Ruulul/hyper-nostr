@@ -1,12 +1,12 @@
 {
-  "name": "hyper-nostr",
-  "version": "1.8.3",
-  "description": "a distributed local-first nostr relay that syncs on background based on topic",
+  "name": "gnostr-lfs",
+  "version": "0.0.0",
+  "description": "gnostr large file service",
   "main": "swarm.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ruulul/hyper-nostr"
+    "url": "https://github.com/gnostr-org/gnostr-lfs"
   },
   "funding": [
     "https://getalby.com/p/v_142857",
@@ -14,12 +14,15 @@
   ],
   "bin": {
     "hyper-nostr": "server.js",
-    "hyper-nostr-db-explorer": "db_explore.js"
+    "gnostr-lfs-db-explorer": "db_explore.js"
   },
   "scripts": {
+    "prepare": "npm install -g @pnpm/exe",
+    "nvm-install": "$(which nvm) exec npm install -g --force",
     "test": "npm run lint && tape tests/**/*.js",
     "lint": "standard --fix",
     "start": "node server.js"
+    "dev": "node server.js"
   },
   "dependencies": {
     "@fastify/websocket": "^8.0.0",

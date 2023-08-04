@@ -5,7 +5,7 @@ import fastifyWebsocket from '@fastify/websocket'
 import createSwarm from './swarm.js'
 import * as SDK from 'hyper-sdk'
 import goodbye from './goodbye.js'
-import { validateEvent, getEventType } from './nostr_events.js'
+import { validateEvent, getEventType } from './gnostr_events.js'
 import { default as fsWithCallbacks } from 'fs'
 
 import child_process from 'child_process'
@@ -16,14 +16,17 @@ const port = process.argv[2] || 3000
 const startingTopics = process.argv.slice(3)
 
 const sdk = await SDK.create({
-  storage: '.hyper-nostr-relay',
+  storage: '.gnostr/lfs',
   autoJoin: true
 })
 
-const content = '#nostr #swarm 🤙'
+//TODO:get git repo name
+//     for content topic
+
+const content = '#gnostr'
 async function writekey () {
   try {
-    await fs.appendFile('KEYS', sdk.publicKey.toString('hex'))
+    await fs.appendFile('.gnostr/lfs/KEYS', sdk.publicKey.toString('hex'))
     console.log('your key is', sdk.publicKey.toString('hex'))
   } catch (err) {
     console.log(err)
@@ -32,43 +35,42 @@ async function writekey () {
 writekey()
 const exec = child_process.exec
 
-const nostril = ''
+const gnostr = ''
 
-exec("type -P nostril || echo ''", (error, stdout, stderr) => {
+exec("type -P gnostr || echo ''", (error, stdout, stderr) => {
   if (error) {
-    console.log(`error: ${error.message}`)
+    console.log(`gnostr-lfs error: ${error.message}`)
     return nil
   }
   if (stderr) {
-    console.log(`stderr: ${stderr}`)
+    console.log(`gnostr-lfs stderr: ${stderr}`)
     return nil
   }
-  // console.log(`stdout: ${stdout}`);
+  console.log(`gnostr-lfs stdout: ${stdout}`);
 })
 
-exec("which nostril || echo 'nostril not found!!! && 1'", (error, stdout, stderr) => {
+exec("which gnostr || echo 'gnostr not found!!! && 1'", (error, stdout, stderr) => {
   if (error) {
-    console.log(`error: ${error.message}`)
+    console.log(`gnostr-lfs error: ${error.message}`)
     return nil
   }
   if (stderr) {
-    console.log(`stderr: ${stderr}`)
+    console.log(`gnostr-lfs stderr: ${stderr}`)
     return nil
   }
-  const nostril = stdout
+  const gnostr = stdout
 })
 
-exec(`nostril --sec ${sdk.publicKey.toString('hex')} -t "hyper-swarm" --envelope --content "${content}" `, (error, stdout, stderr) => {
+exec(`gnostr --sec ${sdk.publicKey.toString('hex')} -t "gnostr" --envelope --content "${content}" `, (error, stdout, stderr) => {
   if (error) {
-    console.log(`51: error: ${error.message}`)
+    console.log(`gnostr-lfs error: ${error.message}`)
     return
   }
   if (stderr) {
-    console.log(`55: stderr: ${stderr}`)
+    console.log(`gnostr-lfs stderr: ${stderr}`)
     return
   }
-  console.log(`nostril:58: stdout: ${stdout}`)
-  // console.log(`${stdout}`);
+  console.log(`gnostr-lfs stdout: ${stdout}`)
 })
 
 goodbye(async _ => {
@@ -102,17 +104,17 @@ fi.register(async function (fastify) {
       const { topic } = req.params
       if (req.headers.accept === 'application/nostr+json') {
         reply.send({
-          name: 'nostr-relay-' + (topic || 'nostr'),
-          description: 'a decentralized nostr relay, powered by Hypercore',
+          name: 'gnostr-lfs-' + (topic || 'hypercore'),
+          description: 'gnostr large file service, powered by Hypercore',
           pubkey: 'd5b4107402ea8a23719f8c7fc57e7eaba6bc54e7c2da62b39300207c156978f1',
           'supported-nips': [1, 2, 9, 11, 12, 16, 20, 33, 45],
-          software: 'https://github.com/Ruulul/hyper-nostr'
+          software: 'https://github.com/gnostr-org/gnostr-lfs'
         })
       } else reply.send()
     },
     wsHandler: async (con, req) => {
       let { topic } = req.params
-      if (!topic) topic = 'nostr'
+      if (!topic) topic = 'gnostr'
       if (!topics.has(topic)) {
         topics.set(topic, await createSwarm(sdk, topic))
       }

@@ -1,5 +1,5 @@
 import { DB } from 'hyperdeebee'
-import { getEventType, validateEvent } from './nostr_events.js'
+import { getEventType, validateEvent } from './gnostr_events.js'
 
 const defaultLimit = Infinity
 

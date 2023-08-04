@@ -1,10 +1,10 @@
 import createDB from './db.js'
 import createBee from './bee.js'
 import { createHash } from 'crypto'
-import { validateEvent, isPersistent } from './nostr_events.js'
+import { validateEvent, isPersistent } from './gnostr_events.js'
 import goodbye from './goodbye.js'
 
-const prefix = 'hyper-nostr-'
+const prefix = 'gnostr-lfs-'
 
 export default async function createSwarm (sdk, _topic) {
   const topic = prefix + _topic
@@ -49,7 +49,7 @@ export default async function createSwarm (sdk, _topic) {
   discovery.on('peer-remove', logPeers)
   initConnection()
 
-  console.log(`swarm ${topic} created with hyper!`)
+  console.log(`swarm ${topic} created with gnostr-lfs!`)
   return { subscriptions, sendEvent, queryEvents, sendQueryToSubscription, update }
 
   function initConnection () {
