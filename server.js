@@ -26,8 +26,9 @@ const sdk = await SDK.create({
 const content = '#gnostr'
 async function writekey () {
   try {
+    //TODO: git config --add gnostr-lfs.pubkey
     await fs.appendFile('.gnostr/lfs/KEYS', sdk.publicKey.toString('hex'))
-    console.log('your key is', sdk.publicKey.toString('hex'))
+    //console.log('your key is', sdk.publicKey.toString('hex'))// we silence to only return EVENT body
   } catch (err) {
     console.log(err)
   }
@@ -70,7 +71,7 @@ exec(`gnostr --sec ${sdk.publicKey.toString('hex')} -t "gnostr" --envelope --con
     console.log(`gnostr-lfs stderr: ${stderr}`)
     return
   }
-  console.log(`gnostr-lfs stdout: ${stdout}`)
+  console.log(`${stdout}`) //we silence so only EVENT body returned
 })
 
 goodbye(async _ => {
@@ -106,7 +107,7 @@ fi.register(async function (fastify) {
         reply.send({
           name: 'gnostr-lfs-' + (topic || 'hypercore'),
           description: 'gnostr large file service, powered by Hypercore',
-          pubkey: 'd5b4107402ea8a23719f8c7fc57e7eaba6bc54e7c2da62b39300207c156978f1',
+          pubkey: sdk.publicKey.toString('hex'),
           'supported-nips': [1, 2, 9, 11, 12, 16, 20, 33, 45],
           software: 'https://github.com/gnostr-org/gnostr-lfs'
         })
