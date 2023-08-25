@@ -186,14 +186,17 @@ env:
 	@echo RELAYS=$(RELAYS)                              >>.env
 .PHONY:pnpm
 pnpm:
-	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global yarn       2>/tmp/gnostr-lfs.log || echo
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global @pnpm/exe  2>/tmp/gnostr-lfs.log || echo
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global            2>/tmp/gnostr-lfs.log || echo
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global yarn       2>/tmp/gnostr-lfs.log || echo
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global fastify    2>/tmp/gnostr-lfs.log || echo
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global eslint     2>/tmp/gnostr-lfs.log || echo
 #@pnpm install reflect-metadata
 #@pnpm install pino-pretty
 start:run
-run:env pnpm## 	gnostr-proxy
+run:env pnpm nvm## 	gnostr-proxy
+	@npm install
+	@npm install -g @pnpm/exe
 	@npm --silent run start
 #@pnpm --silence install >/tmp/gnostr-lfs.log && pnpm --silence run start >/tmp/gnostr-lfs.log#&
 lynx-dump:
