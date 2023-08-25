@@ -1,12 +1,16 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@fastify/websocket':
     specifier: ^8.0.0
     version: 8.0.0
   autobase:
     specifier: github:holepunchto/autobase
-    version: github.com/holepunchto/autobase/7719d9a87fd191563044cb14468340ce42b6d4c7
+    version: github.com/holepunchto/autobase/976ec55c4336af466d6a693ec229254f79055212
   autodeebee:
     specifier: ^1.0.1
     version: 1.0.1
@@ -24,7 +28,7 @@ dependencies:
     version: 2.8.0
   hyperdeebee:
     specifier: github:Telios-org/hyperdeebee
-    version: github.com/Ruulul/hyperdeebee/d0cad8b133700d11797963b2547214db91258378
+    version: github.com/Telios-org/hyperdeebee/d0cad8b133700d11797963b2547214db91258378
   nostr-tools:
     specifier: ^1.10.1
     version: 1.10.1
@@ -2738,6 +2742,7 @@ packages:
 
   /uv-errors@1.0.4:
     resolution: {integrity: sha512-6hlu1s0O+t+PHEMgAIVb+JxOOIyc4RdYaKwtDNJNQp6R3uMMBjfrSYysHTVgX/o1QQ0tBucwm/pIAkiXEBLxTA==}
+    requiresBuild: true
     dev: false
     optional: true
 
@@ -2830,8 +2835,8 @@ packages:
       b4a: 1.6.3
     dev: false
 
-  github.com/Ruulul/hyperdeebee/d0cad8b133700d11797963b2547214db91258378:
-    resolution: {tarball: https://codeload.github.com/Ruulul/hyperdeebee/tar.gz/d0cad8b133700d11797963b2547214db91258378}
+  github.com/Telios-org/hyperdeebee/d0cad8b133700d11797963b2547214db91258378:
+    resolution: {tarball: https://codeload.github.com/Telios-org/hyperdeebee/tar.gz/d0cad8b133700d11797963b2547214db91258378}
     name: hyperdeebee
     version: 2.0.1
     dependencies:
@@ -2839,10 +2844,10 @@ packages:
       cbor-sync: 1.0.4
     dev: false
 
-  github.com/holepunchto/autobase/7719d9a87fd191563044cb14468340ce42b6d4c7:
-    resolution: {tarball: https://codeload.github.com/holepunchto/autobase/tar.gz/7719d9a87fd191563044cb14468340ce42b6d4c7}
+  github.com/holepunchto/autobase/976ec55c4336af466d6a693ec229254f79055212:
+    resolution: {tarball: https://codeload.github.com/holepunchto/autobase/tar.gz/976ec55c4336af466d6a693ec229254f79055212}
     name: autobase
-    version: 1.0.0-alpha.8
+    version: 1.0.0-alpha.9
     dependencies:
       b4a: 1.6.3
       codecs: 3.1.0
