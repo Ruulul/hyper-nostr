@@ -29,6 +29,7 @@
     "@fastify/websocket": "^8.0.0",
     "autobase": "github:holepunchto/autobase",
     "autodeebee": "^1.0.1",
+    "eslint": "8.47.0",
     "fastify": "^4.17.0",
     "graceful-goodbye": "^1.2.1",
     "hyper-sdk": "^4.2.4",

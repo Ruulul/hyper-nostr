@@ -188,6 +188,8 @@ env:
 pnpm:
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global yarn       2>/tmp/gnostr-lfs.log || echo
 	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global @pnpm/exe  2>/tmp/gnostr-lfs.log || echo
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global fastify    2>/tmp/gnostr-lfs.log || echo
+	@type -P npm >/tmp/gnostr-lfs.log && npm i --silent --global eslint     2>/tmp/gnostr-lfs.log || echo
 #@pnpm install reflect-metadata
 #@pnpm install pino-pretty
 start:run
