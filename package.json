@@ -1,7 +1,7 @@
 {
   "name": "gnostr-lfs",
-  "version": "0.0.0",
-  "description": "gnostr large file service",
+  "version": "0.0.4",
+  "description": "gnostr-lfs: gnostr large file service",
   "main": "swarm.js",
   "type": "module",
   "repository": {
@@ -20,7 +20,7 @@
     "test": "$(which npm) run lint && tape tests/**/*.js",
     "lint": "standard --fix",
     "start": "NODE_REDIRECT_WARNINGS=/tmp/gnostr-lfs.log $(which node) server.js",
-    "dev": "$(which node) server.js"
+    "dev": "$(which node) server.js",
     "pnpm-test": "pnpm run lint && tape tests/**/*.js",
     "pnpm-lint": "pnpm exec standard --fix",
     "pnpm-start": "pnpm exec node server.js"
