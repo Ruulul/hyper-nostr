@@ -9,11 +9,10 @@
     "url": "https://github.com/gnostr-org/gnostr-lfs"
   },
   "funding": [
-    "https://getalby.com/p/v_142857",
-    "https://ko-fi.com/v142857"
+    "nostr://edfa27d49d2af37ee331e1225bb6ed1912c6d999281b36d8018ad99bc3573c29"
   ],
   "bin": {
-    "hyper-nostr": "server.js",
+    "gnostr-lfs": "server.js",
     "gnostr-lfs-db-explorer": "db_explore.js"
   },
   "scripts": {
@@ -22,6 +21,9 @@
     "lint": "standard --fix",
     "start": "NODE_REDIRECT_WARNINGS=/tmp/gnostr-lfs.log $(which node) server.js",
     "dev": "$(which node) server.js"
+    "pnpm-test": "pnpm run lint && tape tests/**/*.js",
+    "pnpm-lint": "pnpm exec standard --fix",
+    "pnpm-start": "pnpm exec node server.js"
   },
   "dependencies": {
     "@fastify/websocket": "^8.0.0",
