@@ -38,3 +38,4 @@ node_modules/.pnpm/node_modules/.bin/pino
 node_modules/.pnpm/node_modules/.bin/resolve
 node_modules/.pnpm/node_modules/.bin/rimraf
 node_modules/.pnpm/node_modules/.bin/semver
+.gnostr

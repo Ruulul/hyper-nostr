@@ -1,6 +1,6 @@
 {
   "name": "gnostr-lfs",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "gnostr-lfs: gnostr large file service",
   "main": "swarm.js",
   "type": "module",
